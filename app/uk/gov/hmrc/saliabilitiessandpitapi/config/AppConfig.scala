@@ -18,8 +18,10 @@ package uk.gov.hmrc.saliabilitiessandpitapi.config
 
 import javax.inject.Inject
 import play.api.Configuration
+import uk.gov.hmrc.saliabilitiessandpitapi.config.internal.Service
 
-class AppConfig @Inject() (config: Configuration) {
+class AppConfig @Inject() (config: Configuration):
 
   val appName: String = config.get[String]("appName")
-}
+
+  val serviceUrl: Service = config.get[Service]("microservice.services.integration")

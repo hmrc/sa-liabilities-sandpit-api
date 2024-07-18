@@ -17,16 +17,17 @@
 package uk.gov.hmrc.saliabilitiessandpitapi.controllers
 
 import controllers.Assets
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import play.api.mvc.{Action, AnyContent}
 
-@Singleton
-class DocumentationController @Inject() (assets: Assets, cc: ControllerComponents) extends BackendController(cc) {
+import javax.inject.Inject
 
-  def definition(): Action[AnyContent] =
-    assets.at("/public/api", "definition.json")
+private[controllers] trait DefinitionAction:
+  val assets: Assets
+  val definition: Action[AnyContent] = assets.at("/public/api", "definition.json")
 
-  def specification(version: String, file: String): Action[AnyContent] =
+private[controllers] trait SpecificationAction:
+  val assets: Assets
+  val specification: (String, String) => Action[AnyContent] = (version: String, file: String) =>
     assets.at(s"/public/api/conf/$version", file)
-}
+
+class DocumentationController @Inject() (val assets: Assets) extends DefinitionAction with SpecificationAction

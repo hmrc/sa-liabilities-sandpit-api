@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.saliabilitiessandpitapi.config
+package uk.gov.hmrc.saliabilitiessandpitapi.service
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.saliabilitiessandpitapi.controllers.{DocumentationController, MicroserviceHelloWorldController}
+import uk.gov.hmrc.saliabilitiessandpitapi.connectors.{LiabilityConnector, WithExecutionContext}
+import uk.gov.hmrc.saliabilitiessandpitapi.mapper.LiabilityMapper
+import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse
 
-class Module extends AbstractModule:
+import scala.concurrent.{ExecutionContext, Future}
 
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[MicroserviceHelloWorldController]).asEagerSingleton()
-    bind(classOf[DocumentationController]).asEagerSingleton()
+trait LiabilityService extends WithExecutionContext:
+  this: LiabilityConnector & LiabilityMapper =>
+
+  val getLiability: String => Future[LiabilityResponse] = nino =>
+    fetchAllBalances(nino)
+      .map(mapToLiabilityResponse)

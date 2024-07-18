@@ -16,20 +16,36 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.controllers
 
-import play.api.mvc._
+import play.api.mvc.*
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendBaseController
+import uk.gov.hmrc.saliabilitiessandpitapi.config.AppConfig
+import uk.gov.hmrc.saliabilitiessandpitapi.connectors.{LiabilityConnector, Recoverable, WithExecutionContext}
+import uk.gov.hmrc.saliabilitiessandpitapi.mapper.LiabilityMapper
+import uk.gov.hmrc.saliabilitiessandpitapi.service.LiabilityService
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
-private[controllers] trait HelloWorldActions {
-  self: BaseController =>
+private[controllers] trait HelloWorldActions extends WithExecutionContext {
+  self: BaseController & LiabilityService =>
 
-  val hello: Action[AnyContent] = Action.async { implicit request: Request[_] =>
-    Future.successful(Ok("Hello world"))
+  def hello(nino: String): Action[AnyContent] = Action.async { implicit request: Request[_] =>
+    for {
+      result <- getLiability(nino)
+    } yield Ok(result)
   }
 }
 
-class MicroserviceHelloWorldController @Inject() (val controllerComponents: ControllerComponents)
-    extends HelloWorldActions
-    with BackendBaseController
+class MicroserviceHelloWorldController @Inject() (
+  val client: HttpClientV2,
+  val configuration: AppConfig,
+  val controllerComponents: ControllerComponents
+) extends LiabilityConnector(using configuration, client),
+      LiabilityService,
+      HelloWorldActions,
+      BackendBaseController,
+      LiabilityMapper,
+      WithExecutionContext:
+
+  override def ec: ExecutionContext = controllerComponents.executionContext

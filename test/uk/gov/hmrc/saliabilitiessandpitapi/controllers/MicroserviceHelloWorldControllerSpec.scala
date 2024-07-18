@@ -16,20 +16,34 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.controllers
 
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status
-import play.api.test.Helpers._
-import play.api.test.{FakeRequest, Helpers}
+import play.api.test.Helpers.*
+import play.api.test.*
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.saliabilitiessandpitapi.config.AppConfig
+import uk.gov.hmrc.saliabilitiessandpitapi.connectors.LiabilityConnector
+import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
+
+import scala.concurrent.Future
 
 class MicroserviceHelloWorldControllerSpec extends AnyWordSpec with Matchers {
 
-  private val fakeRequest = FakeRequest("GET", "/")
-  private val controller  = new MicroserviceHelloWorldController(Helpers.stubControllerComponents())
+  private val fakeRequest = FakeRequest("GET", "/liability/nino/:nino")
+  private val controller  = new MicroserviceHelloWorldController(
+    mock[HttpClientV2],
+    mock[AppConfig],
+    Helpers.stubControllerComponents()
+  ) with LiabilityConnector:
+    override val fetchAllBalances: String => Future[Seq[BalanceDetail]] = nino => Future.successful(Seq())
 
   "GET /" should {
     "return 200" in {
-      val result = controller.hello()(fakeRequest)
+      val result = controller.hello("QQ123456A")(fakeRequest)
       status(result) shouldBe Status.OK
     }
   }
