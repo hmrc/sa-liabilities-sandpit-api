@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.saliabilitiessandpitapi.config
+package uk.gov.hmrc.saliabilitiessandpitapi.connectors
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.saliabilitiessandpitapi.controllers.{DocumentationController, MicroserviceHelloWorldController}
+import scala.concurrent.ExecutionContext
 
-class Module extends AbstractModule:
-
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[MicroserviceHelloWorldController]).asEagerSingleton()
-    bind(classOf[DocumentationController]).asEagerSingleton()
+trait WithExecutionContext:
+  given ec: ExecutionContext

@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.saliabilitiessandpitapi.config
+package uk.gov.hmrc.saliabilitiessandpitapi.mapper
 
-import com.google.inject.AbstractModule
-import uk.gov.hmrc.saliabilitiessandpitapi.controllers.{DocumentationController, MicroserviceHelloWorldController}
+import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse
+import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
 
-class Module extends AbstractModule:
-
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[MicroserviceHelloWorldController]).asEagerSingleton()
-    bind(classOf[DocumentationController]).asEagerSingleton()
+trait LiabilityMapper:
+  val mapToLiabilityResponse: Seq[BalanceDetail] => LiabilityResponse = LiabilityResponse.Ok.apply
