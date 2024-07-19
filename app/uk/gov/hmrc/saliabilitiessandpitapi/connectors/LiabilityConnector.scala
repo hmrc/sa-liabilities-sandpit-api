@@ -21,14 +21,16 @@ import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.saliabilitiessandpitapi.config.AppConfig
 import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.*
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-trait LiabilityConnector(using config: AppConfig, client: HttpClientV2) extends WithExecutionContext with Recoverable:
+trait LiabilityConnector extends WithExecutionContext with Recoverable:
+  def config: AppConfig
+  def client: HttpClientV2
   protected given hc: HeaderCarrier = HeaderCarrier()
-  protected given url: String       = config.serviceUrl
+  protected given service: String   = config.integrationService
 
   val fetchAllBalances: String => Future[Seq[BalanceDetail]] = nino =>
     client
-      .get(url"$url/balance/$nino")
+      .get(url"$service/balance/$nino")
       .execute[Seq[BalanceDetail]]
       .recoverWith(recoverable)

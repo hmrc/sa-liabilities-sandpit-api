@@ -1,3 +1,4 @@
 # microservice specific routes
 
-GET        /liability/nino/:nino    uk.gov.hmrc.saliabilitiessandpitapi.controllers.MicroserviceHelloWorldController.hello(nino: String)
+GET        /liability/nino/:nino    uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.getLiabilityByNino(nino: String)
+

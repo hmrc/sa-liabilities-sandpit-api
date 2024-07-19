@@ -19,9 +19,9 @@ package uk.gov.hmrc.saliabilitiessandpitapi.connectors
 import play.api.Logging
 import uk.gov.hmrc.http.{JsValidationException, UpstreamErrorResponse}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-private[this] trait Recoverable extends WithExecutionContext with Logging:
+private[this] trait Recoverable extends Logging:
 
   def recoverable[T]: PartialFunction[Throwable, Future[T]] =
     case e: UpstreamErrorResponse =>

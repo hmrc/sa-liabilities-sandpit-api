@@ -16,19 +16,22 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.models;
 
+import play.api.http.{ContentTypeOf, ContentTypes, Writeable}
 import play.api.libs.json.*
 import play.api.mvc.Codec
-import play.api.http.{ContentTypeOf, ContentTypes, Writeable}
 import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
 
 enum LiabilityResponse:
   case Ok(balances: Seq[BalanceDetail])
   case Error(error: String, description: String)
+  case InvalidInputNino(description: String)
 
 object LiabilityResponse:
   given Format[Ok] = Json.format[Ok]
 
   given Format[Error] = Json.format[Error]
+
+  given Format[InvalidInputNino] = Json.format[InvalidInputNino]
 
   given contentTypeOf: ContentTypeOf[LiabilityResponse] = ContentTypeOf(Some(ContentTypes.JSON))
 
@@ -38,10 +41,13 @@ object LiabilityResponse:
   given Format[LiabilityResponse] = new Format[LiabilityResponse]:
     def reads(json: JsValue): JsResult[LiabilityResponse] =
       (json \ "type").as[String] match
-        case "Ok"    => summon[Format[Ok]].reads(json)
-        case "Error" => summon[Format[Error]].reads(json)
-        case _       => JsError("Unknown type")
+        case "Ok"               => summon[Format[Ok]].reads(json)
+        case "Error"            => summon[Format[Error]].reads(json)
+        case "InvalidInputNino" => summon[Format[InvalidInputNino]].reads(json)
+        case _                  => JsError("Unknown type")
 
     def writes(o: LiabilityResponse): JsValue = o match
-      case ok: Ok       => summon[Format[Ok]].writes(ok).as[JsObject] + ("type"       -> JsString("Ok"))
-      case error: Error => summon[Format[Error]].writes(error).as[JsObject] + ("type" -> JsString("Error"))
+      case ok: Ok                             => summon[Format[Ok]].writes(ok).as[JsObject] + ("type"       -> JsString("Ok"))
+      case error: Error                       => summon[Format[Error]].writes(error).as[JsObject] + ("type" -> JsString("Error"))
+      case invalidInputNino: InvalidInputNino =>
+        summon[Format[InvalidInputNino]].writes(invalidInputNino).as[JsObject] + ("type" -> JsString("Error"))

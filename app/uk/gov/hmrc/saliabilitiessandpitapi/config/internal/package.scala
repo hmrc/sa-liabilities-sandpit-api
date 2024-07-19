@@ -16,12 +16,17 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.config
 
-import javax.inject.Inject
-import play.api.Configuration
-import uk.gov.hmrc.saliabilitiessandpitapi.config.internal.Service
+import com.typesafe.config.Config
+import play.api.ConfigLoader
 
-class AppConfig @Inject() (config: Configuration):
+package object internal:
+  opaque type Host     = String
+  opaque type Port     = String
+  opaque type Protocol = String
 
-  val appName: String = config.get[String]("appName")
+  private def stringConfigLoader[T]: ConfigLoader[T] = (config: Config, path: String) =>
+    config.getString(path).asInstanceOf[T]
 
-  val integrationService: Service = config.get[Service]("microservice.services.integration")
+  private given ConfigLoader[Host]     = stringConfigLoader[Host]
+  private given ConfigLoader[Port]     = stringConfigLoader[Port]
+  private given ConfigLoader[Protocol] = stringConfigLoader[Protocol]

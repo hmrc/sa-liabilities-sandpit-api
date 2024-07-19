@@ -19,17 +19,6 @@ package uk.gov.hmrc.saliabilitiessandpitapi.config.internal
 import play.api.{ConfigLoader, Configuration}
 import com.typesafe.config.Config
 
-opaque type Host     = String
-opaque type Port     = String
-opaque type Protocol = String
-
-private def stringConfigLoader[T]: ConfigLoader[T] = (config: Config, path: String) =>
-  config.getString(path).asInstanceOf[T]
-
-private given ConfigLoader[Host]     = stringConfigLoader[Host]
-private given ConfigLoader[Port]     = stringConfigLoader[Port]
-private given ConfigLoader[Protocol] = stringConfigLoader[Protocol]
-
 final case class Service(protocol: Protocol, host: Host, port: Port):
   def baseUrl: String           = s"$protocol://$host:$port"
   override def toString: String = baseUrl

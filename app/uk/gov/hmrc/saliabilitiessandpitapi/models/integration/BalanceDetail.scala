@@ -16,44 +16,8 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.models.integration
 
-import scala.math.BigDecimal
 import play.api.libs.json.*
-import uk.gov.hmrc.saliabilitiessandpitapi.json.*
-
-opaque type PendingDueDate   = String
-opaque type PayableDueDate   = String
-opaque type TotalBalance     = BigDecimal
-opaque type PayableAmount    = BigDecimal
-opaque type PendingDueAmount = BigDecimal
-opaque type OverdueAmount    = BigDecimal
-
-object PendingDueDate extends StringBasedJsonOps[PendingDueDate]:
-  def apply(value: String): PendingDueDate            = value
-  def valueOf(pendingDueDate: PendingDueDate): String = pendingDueDate
-
-object PayableDueDate extends StringBasedJsonOps[PayableDueDate]:
-  def apply(value: String): PayableDueDate            = value
-  def valueOf(payableDueDate: PayableDueDate): String = payableDueDate
-
-object TotalBalance:
-  def apply(value: BigDecimal): TotalBalance = value
-  given Writes[TotalBalance]                 = bigDecimalBasedWrites(apply)
-  given Reads[TotalBalance]                  = bigDecimalBasedReads
-
-object PayableAmount:
-  def apply(value: BigDecimal): PayableAmount = value
-  given Writes[PayableAmount]                 = bigDecimalBasedWrites(apply)
-  given Reads[PayableAmount]                  = bigDecimalBasedReads
-
-object PendingDueAmount:
-  def apply(value: BigDecimal): PendingDueAmount = value
-  given Writes[PendingDueAmount]                 = bigDecimalBasedWrites(apply)
-  given Reads[PendingDueAmount]                  = bigDecimalBasedReads
-
-object OverdueAmount:
-  def apply(value: BigDecimal): OverdueAmount = value
-  given Writes[OverdueAmount]                 = bigDecimalBasedWrites(apply)
-  given Reads[OverdueAmount]                  = bigDecimalBasedReads
+import uk.gov.hmrc.saliabilitiessandpitapi.models.*
 
 case class BalanceDetail(
   payableAmount: PayableAmount,

@@ -20,11 +20,14 @@ import uk.gov.hmrc.saliabilitiessandpitapi.connectors.{LiabilityConnector, WithE
 import uk.gov.hmrc.saliabilitiessandpitapi.mapper.LiabilityMapper
 import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait LiabilityService extends WithExecutionContext:
-  this: LiabilityConnector & LiabilityMapper =>
+  this: LiabilityMapper =>
+
+  val liabilityConnector: LiabilityConnector
 
   val getLiability: String => Future[LiabilityResponse] = nino =>
-    fetchAllBalances(nino)
+    liabilityConnector
+      .fetchAllBalances(nino)
       .map(mapToLiabilityResponse)
