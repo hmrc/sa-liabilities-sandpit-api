@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.saliabilitiessandpitapi.config
+package uk.gov.hmrc.saliabilitiessandpitapi.controllers
+
+import play.api.mvc.{BaseController, ControllerComponents}
+import uk.gov.hmrc.saliabilitiessandpitapi.service.LiabilityService
 
 import javax.inject.Inject
-import play.api.Configuration
-import uk.gov.hmrc.saliabilitiessandpitapi.config.internal.Service
+import scala.concurrent.ExecutionContext
 
-class AppConfig @Inject() (config: Configuration):
-
-  val appName: String = config.get[String]("appName")
-
-  val integrationService: Service = config.get[Service]("microservice.services.integration")
+package object actions {
+  case class DefaultNINOValidationAction @Inject() ()(implicit val executionContext: ExecutionContext)
+      extends NINOValidationAction
+}

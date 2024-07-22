@@ -17,11 +17,17 @@
 package uk.gov.hmrc.saliabilitiessandpitapi.config
 
 import com.google.inject.AbstractModule
-import uk.gov.hmrc.saliabilitiessandpitapi.controllers.{DocumentationController, MicroserviceHelloWorldController}
+import uk.gov.hmrc.saliabilitiessandpitapi.connectors.{DefaultLiabilityConnector, LiabilityConnector}
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.{DefaultNINOValidationAction, NINOValidationAction}
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.{DocumentationController, LiabilityController}
+import uk.gov.hmrc.saliabilitiessandpitapi.service.{DefaultLiabilityService, LiabilityService}
 
 class Module extends AbstractModule:
 
   override def configure(): Unit =
     bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[MicroserviceHelloWorldController]).asEagerSingleton()
+    bind(classOf[LiabilityController]).asEagerSingleton()
     bind(classOf[DocumentationController]).asEagerSingleton()
+    bind(classOf[NINOValidationAction]).to(classOf[DefaultNINOValidationAction]).asEagerSingleton()
+    bind(classOf[LiabilityConnector]).to(classOf[DefaultLiabilityConnector]).asEagerSingleton()
+    bind(classOf[LiabilityService]).to(classOf[DefaultLiabilityService]).asEagerSingleton()

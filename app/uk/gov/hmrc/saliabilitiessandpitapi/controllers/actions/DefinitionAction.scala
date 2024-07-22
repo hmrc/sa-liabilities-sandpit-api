@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.saliabilitiessandpitapi.config
+package uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions
 
-import javax.inject.Inject
-import play.api.Configuration
-import uk.gov.hmrc.saliabilitiessandpitapi.config.internal.Service
+import controllers.Assets
+import play.api.mvc.Action
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.DefinitionAction.{FILE, ROOT_FOLDER}
 
-class AppConfig @Inject() (config: Configuration):
+private[controllers] trait DefinitionAction:
+  val assets: Assets
+  val definition: Action[_] = assets.at(ROOT_FOLDER, FILE)
 
-  val appName: String = config.get[String]("appName")
-
-  val integrationService: Service = config.get[Service]("microservice.services.integration")
+private object DefinitionAction:
+  private val ROOT_FOLDER = "/public/api"
+  private val FILE        = "definition.json"

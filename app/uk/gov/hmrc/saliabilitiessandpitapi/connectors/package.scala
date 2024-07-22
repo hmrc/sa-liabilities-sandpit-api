@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.saliabilitiessandpitapi.config
+package uk.gov.hmrc.saliabilitiessandpitapi
+
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.saliabilitiessandpitapi.config.AppConfig
 
 import javax.inject.Inject
-import play.api.Configuration
-import uk.gov.hmrc.saliabilitiessandpitapi.config.internal.Service
+import scala.concurrent.ExecutionContext
 
-class AppConfig @Inject() (config: Configuration):
+package object connectors:
 
-  val appName: String = config.get[String]("appName")
-
-  val integrationService: Service = config.get[Service]("microservice.services.integration")
+  case class DefaultLiabilityConnector @Inject() (config: AppConfig, client: HttpClientV2, ec: ExecutionContext)
+      extends LiabilityConnector
