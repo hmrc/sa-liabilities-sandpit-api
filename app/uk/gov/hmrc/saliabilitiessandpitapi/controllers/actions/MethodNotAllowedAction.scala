@@ -16,14 +16,15 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions
 
-import controllers.Assets
-import play.api.mvc.Action
-import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.DefinitionAction.{FILE, ROOT_FOLDER}
+import play.api.mvc.{Action, BaseController, Result, Results}
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.MethodNotAllowedAction.result
+import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse
+import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse.MethodNotAllowed
 
-private[controllers] trait DefinitionAction:
-  val assets: Assets
-  val definition: Action[_] = assets.at(ROOT_FOLDER, FILE)
+trait MethodNotAllowedAction:
+  self: BaseController =>
 
-private object DefinitionAction:
-  private final val ROOT_FOLDER = "/public/api"
-  private final val FILE        = "definition.json"
+  val methodNotAllowed: Any => Action[_] = _ => Action(result)
+
+private object MethodNotAllowedAction:
+  private final val result: Result = Results.MethodNotAllowed(LiabilityResponse.MethodNotAllowed("Method Not Allowed"))

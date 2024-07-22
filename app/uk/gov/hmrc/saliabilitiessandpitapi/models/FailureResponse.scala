@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions
+package uk.gov.hmrc.saliabilitiessandpitapi.models
 
-import controllers.Assets
-import play.api.mvc.Action
-import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.DefinitionAction.{FILE, ROOT_FOLDER}
-
-private[controllers] trait DefinitionAction:
-  val assets: Assets
-  val definition: Action[_] = assets.at(ROOT_FOLDER, FILE)
-
-private object DefinitionAction:
-  private final val ROOT_FOLDER = "/public/api"
-  private final val FILE        = "definition.json"
+trait FailureResponse:
+  val description: String

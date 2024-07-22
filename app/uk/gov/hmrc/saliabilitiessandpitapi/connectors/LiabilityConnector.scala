@@ -24,8 +24,8 @@ import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.*
 import scala.concurrent.Future
 
 trait LiabilityConnector extends WithExecutionContext with Recoverable:
-  def config: AppConfig
-  def client: HttpClientV2
+  val config: AppConfig
+  val client: HttpClientV2
   protected given hc: HeaderCarrier = HeaderCarrier()
   protected given service: String   = config.integrationService
 

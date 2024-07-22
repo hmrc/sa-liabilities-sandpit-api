@@ -17,7 +17,6 @@
 package uk.gov.hmrc.saliabilitiessandpitapi.controllers
 
 import play.api.mvc.{BaseController, ControllerComponents}
-import uk.gov.hmrc.saliabilitiessandpitapi.service.LiabilityService
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext

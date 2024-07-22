@@ -1,4 +1,8 @@
 # microservice specific routes
 
-GET        /liability/nino/:nino    uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.getLiabilityByNino(nino: String)
-
+GET         /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.getLiabilityByNino(nino: String)
+POST        /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
+PUT         /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
+DELETE      /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
+OPTIONS     /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
+PATCH       /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
