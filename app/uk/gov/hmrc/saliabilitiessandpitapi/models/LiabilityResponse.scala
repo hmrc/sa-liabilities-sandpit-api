@@ -18,6 +18,7 @@ package uk.gov.hmrc.saliabilitiessandpitapi.models;
 
 import play.api.http.{ContentTypeOf, ContentTypes, Writeable}
 import play.api.libs.json.*
+import play.api.libs.json.Json.*
 import play.api.mvc.Codec
 import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
 
@@ -25,29 +26,28 @@ enum LiabilityResponse:
   case Ok(balances: Seq[BalanceDetail])
   case Error(error: String, description: String)
   case InvalidInputNino(description: String)
+  case MethodNotAllowed(description: String)
+  case NotFound(description: String)
+  case Unauthorized(description: String)
+  case InternalServerError(description: String)
 
 object LiabilityResponse:
-  given Format[Ok] = Json.format[Ok]
-
-  given Format[Error] = Json.format[Error]
-
-  given Format[InvalidInputNino] = Json.format[InvalidInputNino]
-
-  given contentTypeOf: ContentTypeOf[LiabilityResponse] = ContentTypeOf(Some(ContentTypes.JSON))
-
+  given OWrites[Ok]                                                 = writes[Ok]
+  given OWrites[Error]                                              = writes[Error]
+  given OWrites[InvalidInputNino]                                   = writes[InvalidInputNino]
+  given OWrites[MethodNotAllowed]                                   = writes[MethodNotAllowed]
+  given OWrites[NotFound]                                           = writes[NotFound]
+  given OWrites[InternalServerError]                                = writes[InternalServerError]
+  given OWrites[Unauthorized]                                       = writes[Unauthorized]
+  given Writes[LiabilityResponse]                                   = Writes {
+    case ok: Ok                                   => toJsObject(ok)
+    case error: Error                             => toJsObject(error)
+    case notFound: NotFound                       => toJsObject(notFound)
+    case unauthorized: Unauthorized               => toJsObject(unauthorized)
+    case invalidInputNino: InvalidInputNino       => toJsObject(invalidInputNino)
+    case methodNotAllowed: MethodNotAllowed       => toJsObject(methodNotAllowed)
+    case internalServerError: InternalServerError => toJsObject(internalServerError)
+  }
+  given contentTypeOf: ContentTypeOf[LiabilityResponse]             = ContentTypeOf(Some(ContentTypes.JSON))
   given writeable(using codec: Codec): Writeable[LiabilityResponse] =
-    Writeable(data => codec.encode(Json.toJson(data).toString()))
-
-  given Format[LiabilityResponse] = new Format[LiabilityResponse]:
-    def reads(json: JsValue): JsResult[LiabilityResponse] =
-      (json \ "type").as[String] match
-        case "Ok"               => summon[Format[Ok]].reads(json)
-        case "Error"            => summon[Format[Error]].reads(json)
-        case "InvalidInputNino" => summon[Format[InvalidInputNino]].reads(json)
-        case _                  => JsError("Unknown type")
-
-    def writes(o: LiabilityResponse): JsValue = o match
-      case ok: Ok                             => summon[Format[Ok]].writes(ok).as[JsObject] + ("type"       -> JsString("Ok"))
-      case error: Error                       => summon[Format[Error]].writes(error).as[JsObject] + ("type" -> JsString("Error"))
-      case invalidInputNino: InvalidInputNino =>
-        summon[Format[InvalidInputNino]].writes(invalidInputNino).as[JsObject] + ("type" -> JsString("Error"))
+    Writeable(data => codec.encode(toJson(data).toString))

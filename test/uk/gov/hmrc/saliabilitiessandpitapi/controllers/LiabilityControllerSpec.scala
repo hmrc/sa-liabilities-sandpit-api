@@ -23,35 +23,54 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status
-import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, Request}
+import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, Request, Result}
 import play.api.test.*
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import uk.gov.hmrc.saliabilitiessandpitapi.controllers.stubs.NINOValidationActionStubs.validNINO
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityControllerSpec.method.*
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityControllerSpec.{invalidInputNino, method}
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.stubs.NINOValidationActionStubs.{failingNINO, validNINO}
 import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse
+import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse.*
 import uk.gov.hmrc.saliabilitiessandpitapi.service.LiabilityService
 
 import scala.concurrent.Future.*
 import scala.concurrent.{ExecutionContext, Future}
 
-class LiabilityControllerSpec extends AnyWordSpec with Matchers {
+class LiabilityControllerSpec extends AnyWordSpec with Matchers:
 
-  private val fakeRequest: Request[AnyContentAsEmpty.type] = FakeRequest("GET", "/liability/nino/QQ123456A")
-  private implicit val components: ControllerComponents    = Helpers.stubControllerComponents()
-  private implicit val ec: ExecutionContext                = components.executionContext
-  private val service: LiabilityService                    = mock[LiabilityService]
-  private val getLiabilityFunction                         = mock[String => Future[LiabilityResponse]]
-  private val controller                                   = new LiabilityController(service, validNINO)
+  private given components: ControllerComponents = Helpers.stubControllerComponents()
+  private given ec: ExecutionContext             = components.executionContext
+  private val service: LiabilityService          = mock[LiabilityService]
+  private val getLiabilityFunction               = mock[String => Future[LiabilityResponse]]
 
-  "GET /liability/nino/QQ123456A" should {
-    "return 200" in {
-      when(getLiabilityFunction.apply(any[String]))
-        .thenReturn(successful(LiabilityResponse.InvalidInputNino("Invalid NINO format.")))
-      when(service.getLiability).thenReturn(getLiabilityFunction)
+  "GET /liability/nino/:nino endpoint" should {
 
-      val result = controller.getLiabilityByNino("QQ123456A")(fakeRequest)
+    "returns 200 for QQ123456A" in {
+      val request: Request[AnyContentAsEmpty.type] = FakeRequest(GET, "/liability/nino/QQ123456A")
+      val controller: LiabilityController          = LiabilityController(service, validNINO)
+
+      when(getLiabilityFunction.apply(any[String])) thenReturn successful(invalidInputNino)
+      when(service.getLiability) thenReturn getLiabilityFunction
+
+      val result: Future[Result] = controller.getLiabilityByNino("QQ123456A")(request)
 
       status(result) shouldBe Status.OK
       verify(service.getLiability)("QQ123456A")
     }
+
+    "returns 400 for invalid NINO format" in {
+      val request: Request[AnyContentAsEmpty.type] = FakeRequest(GET, "/liability/INVALID")
+      val controller: LiabilityController          = LiabilityController(service, failingNINO)
+
+      val result: Future[Result] = controller.getLiabilityByNino("INVALID")(request)
+
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentAsString(result) should include("Invalid NINO format")
+    }
   }
-}
+
+private object LiabilityControllerSpec:
+  object method:
+    val GET = "GET"
+
+  private val invalidInputNino: LiabilityResponse = InvalidInputNino("Invalid NINO format.")
