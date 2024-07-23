@@ -18,8 +18,9 @@ package uk.gov.hmrc.saliabilitiessandpitapi.connectors
 
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
 import uk.gov.hmrc.saliabilitiessandpitapi.config.AppConfig
-import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.*
+import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
 
 import scala.concurrent.Future
 
@@ -29,8 +30,8 @@ trait LiabilityConnector extends WithExecutionContext with Recoverable:
   protected given hc: HeaderCarrier = HeaderCarrier()
   protected given service: String   = config.integrationService
 
-  val fetchAllBalances: String => Future[Seq[BalanceDetail]] = nino =>
+  val fetchAllBalances: String => Future[Either[ErrorResponse, Seq[BalanceDetail]]] = nino =>
     client
       .get(url"$service/balance/$nino")
-      .execute[Seq[BalanceDetail]]
+      .execute[Either[ErrorResponse, Seq[BalanceDetail]]]
       .recoverWith(recoverable)
