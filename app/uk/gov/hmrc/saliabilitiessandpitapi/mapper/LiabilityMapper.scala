@@ -16,8 +16,19 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.mapper
 
+import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
 import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse
+import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse.{InternalServerError, Ok}
 import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
+import LiabilityMapper._
 
 trait LiabilityMapper:
-  val mapToLiabilityResponse: Seq[BalanceDetail] => LiabilityResponse = LiabilityResponse.Ok.apply
+
+  val mapToLiabilityResponse: Either[ErrorResponse, Seq[BalanceDetail]] => LiabilityResponse = {
+    case Left(errorResponse)   => errorResponse.toLiabilityResponse
+    case Right(balanceDetails) => Ok(balanceDetails)
+  }
+
+object LiabilityMapper:
+  extension (errorResponse: ErrorResponse)
+    inline def toLiabilityResponse: LiabilityResponse = InternalServerError(errorResponse.message)
