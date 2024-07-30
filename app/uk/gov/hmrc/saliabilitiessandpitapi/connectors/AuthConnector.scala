@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.saliabilitiessandpitapi.config
+package uk.gov.hmrc.saliabilitiessandpitapi.connectors
 
-import javax.inject.Inject
-import play.api.Configuration
-import uk.gov.hmrc.saliabilitiessandpitapi.config.internal.Service
+import uk.gov.hmrc.auth.core.PlayAuthConnector
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.saliabilitiessandpitapi.config.AppConfig
 
-class AppConfig @Inject() (config: Configuration):
-
-  val appName: String = config.get[String]("appName")
-
-  val integrationService: Service = config.get[Service]("microservice.services.integration")
-  
-  val authorisationService: Service = config.get[Service]("microservice.services.auth")
+trait AuthConnector extends PlayAuthConnector {
+  val config: AppConfig
+  val client: HttpClientV2
+}

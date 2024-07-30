@@ -21,15 +21,17 @@ import uk.gov.hmrc.saliabilitiessandpitapi.connectors.WithExecutionContext
 import uk.gov.hmrc.saliabilitiessandpitapi.service.LiabilityService
 
 private[controllers] trait LiabilityAction extends WithExecutionContext {
-  self: BaseController =>
+  self: BaseController with AuthAction =>
 
   val liabilityService: LiabilityService
   val ninoValidation: NINOValidationAction
 
   def getLiabilityByNino(nino: String): Action[AnyContent] = (Action andThen ninoValidation).async {
     implicit request: Request[_] =>
-      for {
-        result <- liabilityService.getLiability(nino)
-      } yield Ok(result)
+      authorised() {
+        for {
+          result <- liabilityService.getLiability(nino)
+        } yield Ok(result)
+      }
   }
 }
