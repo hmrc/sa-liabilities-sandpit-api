@@ -19,9 +19,9 @@ package uk.gov.hmrc.saliabilitiessandpitapi.models.integration
 import play.api.libs.json.*
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
+import uk.gov.hmrc.saliabilitiessandpitapi.models.*
 
 import scala.util.{Failure, Success, Try}
-import uk.gov.hmrc.saliabilitiessandpitapi.models.*
 
 case class BalanceDetail(
   payableAmount: PayableAmount,
@@ -33,18 +33,31 @@ case class BalanceDetail(
 )
 
 object BalanceDetail:
-  given Format[BalanceDetail]                                = Json.format[BalanceDetail]
-  given HttpReads[Either[ErrorResponse, Seq[BalanceDetail]]] = (_, _, response: HttpResponse) =>
+  given Format[BalanceDetail] = Json.format[BalanceDetail]
+
+  given Reads[BalanceDetail | Seq[BalanceDetail]] = (js: JsValue) =>
+    val single   = js.validate[BalanceDetail]
+    val sequence = js.validate[Seq[BalanceDetail]]
+
+    (single, sequence) match {
+      case (JsSuccess(single, _), _) => JsSuccess(single)
+      case (_, JsSuccess(seq, _))    => JsSuccess(seq)
+      case (JsError(errors), _)      => JsError(errors)
+      case _                         => JsError("Unable to parse as BalanceDetail or Seq[BalanceDetail]")
+    }
+
+  given HttpReads[Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]]] = (_, _, response: HttpResponse) =>
     Try {
-      val json = response.json
-      if ((response.status / 100) != 2) json.validate[ErrorResponse] match {
+      val json: JsValue = response.json
+      val status: Int   = response.status
+      if ((status / 100) != 2) json.validate[ErrorResponse] match {
         case JsSuccess(errorResponse, _) => Left(errorResponse)
-        case JsError(errors)             => Left(ErrorResponse(response.status, "Error parsing response", Some(errors.toString)))
+        case JsError(errors)             => Left(ErrorResponse(status, "Error parsing response", Some(errors.toString)))
       }
       else
-        json.validate[Seq[BalanceDetail]] match {
-          case JsSuccess(balanceDetails, _) => Right(balanceDetails)
-          case JsError(errors)              => Left(ErrorResponse(response.status, "Error parsing response", Some(errors.toString)))
+        json.validate[BalanceDetail | Seq[BalanceDetail]] match {
+          case JsSuccess(result, _) => Right(result)
+          case JsError(errors)      => Left(ErrorResponse(status, "Error parsing response", Some(errors.toString)))
         }
     } match {
       case Success(result)    => result

@@ -24,14 +24,12 @@ import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
 
 import scala.concurrent.Future
 
-trait LiabilityConnector extends WithExecutionContext with Recoverable:
-  val config: AppConfig
-  val client: HttpClientV2
+trait LiabilityConnector(using config: AppConfig, client: HttpClientV2) extends WithExecutionContext with Recoverable:
   protected given hc: HeaderCarrier = HeaderCarrier()
   protected given service: String   = config.integrationService
 
-  val fetchAllBalances: String => Future[Either[ErrorResponse, Seq[BalanceDetail]]] = nino =>
+  val fetchAllBalances: String => Future[Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]]] = nino =>
     client
       .get(url"$service/balance/$nino")
-      .execute[Either[ErrorResponse, Seq[BalanceDetail]]]
+      .execute[Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]]]
       .recoverWith(recoverable)

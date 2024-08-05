@@ -25,4 +25,4 @@ import scala.concurrent.ExecutionContext
 package object connectors:
 
   case class DefaultLiabilityConnector @Inject() (config: AppConfig, client: HttpClientV2, ec: ExecutionContext)
-      extends LiabilityConnector
+      extends LiabilityConnector(using config, client)

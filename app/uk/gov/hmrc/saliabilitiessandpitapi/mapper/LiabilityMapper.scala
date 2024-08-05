@@ -24,9 +24,10 @@ import LiabilityMapper._
 
 trait LiabilityMapper:
 
-  val mapToLiabilityResponse: Either[ErrorResponse, Seq[BalanceDetail]] => LiabilityResponse = {
-    case Left(errorResponse)   => errorResponse.toLiabilityResponse
-    case Right(balanceDetails) => Ok(balanceDetails)
+  val mapToLiabilityResponse: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] => LiabilityResponse = {
+    case Left(errorResponse)                 => errorResponse.toLiabilityResponse
+    case Right(single: BalanceDetail)        => Ok(Seq(single))
+    case Right(iterable: Seq[BalanceDetail]) => Ok(iterable)
   }
 
 object LiabilityMapper:
