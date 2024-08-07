@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.models.integration
 
+import play.api.http.Status
 import play.api.libs.json.*
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
 import uk.gov.hmrc.saliabilitiessandpitapi.models.*
-
-import scala.util.{Failure, Success, Try}
 
 case class BalanceDetail(
   payableAmount: PayableAmount,
@@ -33,6 +32,8 @@ case class BalanceDetail(
 )
 
 object BalanceDetail:
+  extension (status: Int) private inline def isSuccessful: Boolean = Status.isSuccessful(status)
+
   given Format[BalanceDetail] = Json.format[BalanceDetail]
 
   given Reads[BalanceDetail | Seq[BalanceDetail]] = (js: JsValue) =>
@@ -47,19 +48,16 @@ object BalanceDetail:
     }
 
   given HttpReads[Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]]] = (_, _, response: HttpResponse) =>
-    Try {
-      val json: JsValue = response.json
-      val status: Int   = response.status
-      if ((status / 100) != 2) json.validate[ErrorResponse] match {
+
+    val json: JsValue = response.json
+    val status: Int   = response.status
+    if status.isSuccessful then
+      json.validate[BalanceDetail | Seq[BalanceDetail]] match {
+        case JsSuccess(result, _) => Right(result)
+        case JsError(errors)      => Left(ErrorResponse(status, "Error parsing response", Some(errors.toString)))
+      }
+    else
+      json.validate[ErrorResponse] match {
         case JsSuccess(errorResponse, _) => Left(errorResponse)
         case JsError(errors)             => Left(ErrorResponse(status, "Error parsing response", Some(errors.toString)))
       }
-      else
-        json.validate[BalanceDetail | Seq[BalanceDetail]] match {
-          case JsSuccess(result, _) => Right(result)
-          case JsError(errors)      => Left(ErrorResponse(status, "Error parsing response", Some(errors.toString)))
-        }
-    } match {
-      case Success(result)    => result
-      case Failure(exception) => Left(ErrorResponse(500, s"Internal server error: ${exception.getMessage}"))
-    }
