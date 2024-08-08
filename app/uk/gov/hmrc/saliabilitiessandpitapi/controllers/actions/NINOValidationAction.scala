@@ -18,8 +18,7 @@ package uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions
 
 import play.api.mvc.{ActionFilter, Request, Result, Results}
 import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.NINOValidationAction.*
-import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse
-import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse.*
+import uk.gov.hmrc.saliabilitiessandpitapi.http.LiabilityErrorResponse.InvalidInputNino
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -35,7 +34,7 @@ trait NINOValidationAction extends ActionFilter[Request]:
 
 private object NINOValidationAction:
   private final val ninoPattern = "^[A-Z]{2}[0-9]{6}[A-D]{1}$".r
-  private final val BAD_REQUEST = Results.BadRequest(InvalidInputNino("Invalid NINO format."))
+  private final val BAD_REQUEST = Results.BadRequest(InvalidInputNino)
 
   extension (request: Request[_]) {
     private def lastSegment: Option[String] = request.path
