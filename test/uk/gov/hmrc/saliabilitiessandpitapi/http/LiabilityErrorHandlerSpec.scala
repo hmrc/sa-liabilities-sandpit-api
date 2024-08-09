@@ -41,27 +41,30 @@ class LiabilityErrorHandlerSpec extends AnyFunSuite, MockitoSugar, Matchers:
 
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
-  test("should handle NinoNotFoundException and return the correct result"):
-  val exception              = NinoNotFoundException()
-  val expectedResult         = toJson(NinoNotFound).toString
-  val result: Future[Result] = errorHandler.onServerError(request, exception)
+  test("should handle NinoNotFoundException and return the correct result") {
+    val exception              = NinoNotFoundException()
+    val expectedResult         = toJson(NinoNotFound).toString
+    val result: Future[Result] = errorHandler.onServerError(request, exception)
 
-  status(result)          shouldBe 400
-  contentAsString(result) shouldBe expectedResult
+    status(result)          shouldBe 400
+    contentAsString(result) shouldBe expectedResult
+  }
 
-  test("should delegate unknown exceptions to the superclass handler"):
-  val exception = new RuntimeException("Unknown error")
+  test("should delegate unknown exceptions to the superclass handler") {
+    val exception = new RuntimeException("Unknown error")
 
-  val result: Future[Result] = errorHandler.onServerError(request, exception)
+    val result: Future[Result] = errorHandler.onServerError(request, exception)
 
-  status(result) shouldBe 500
-  assert(contentAsString(result).contains("Unknown error"))
+    status(result) shouldBe 500
+    assert(contentAsString(result).contains("Unknown error"))
+  }
 
-  test("should handle InvalidPathParametersException and return the correct result"):
-  val exception      = InvalidPathParametersException()
-  val expectedResult = toJson(InvalidInputNino).toString
+  test("should handle InvalidPathParametersException and return the correct result") {
+    val exception      = InvalidPathParametersException()
+    val expectedResult = toJson(InvalidInputNino).toString
 
-  val result: Future[Result] = errorHandler.onServerError(request, exception)
+    val result: Future[Result] = errorHandler.onServerError(request, exception)
 
-  status(result)          shouldBe 400
-  contentAsString(result) shouldBe expectedResult
+    status(result)          shouldBe 400
+    contentAsString(result) shouldBe expectedResult
+  }

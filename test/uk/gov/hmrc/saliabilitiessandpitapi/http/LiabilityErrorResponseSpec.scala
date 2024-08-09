@@ -22,30 +22,34 @@ import uk.gov.hmrc.saliabilitiessandpitapi.http.LiabilityErrorResponse.*
 
 class LiabilityErrorResponseSpec extends AnyFunSuite:
 
-  test("InvalidInputNino should have correct errorCode and errorDescription"):
-  val response = InvalidInputNino
+  test("InvalidInputNino should have correct errorCode and errorDescription") {
+    val response = InvalidInputNino
 
-  assert(response.errorCode == "1113")
-  assert(response.errorDescription == "Invalid NINO format")
+    assert(response.errorCode == "1113")
+    assert(response.errorDescription == "Invalid NINO format")
+  }
 
-  test("NinoNotFound should have correct errorCode and errorDescription"):
-  val response = NinoNotFound
+  test("NinoNotFound should have correct errorCode and errorDescription") {
+    val response = NinoNotFound
 
-  assert(response.errorCode == "1002")
-  assert(response.errorDescription == "NINO not found")
+    assert(response.errorCode == "1002")
+    assert(response.errorDescription == "NINO not found")
+  }
 
-  test("InvalidInputNino should serialize to correct JSON"):
-  val response = InvalidInputNino
+  test("InvalidInputNino should serialize to correct JSON") {
+    val response = InvalidInputNino
 
-  val json = Json.toJson(response)
+    val json = Json.toJson(response)
 
-  assert((json \ "errorCode").as[String] == "1113")
-  assert((json \ "errorDescription").as[String] == "Invalid NINO format")
+    assert((json \ "errorCode").as[String] == "1113")
+    assert((json \ "errorDescription").as[String] == "Invalid NINO format")
+  }
 
-  test("NinoNotFound should serialize to correct JSON"):
-  val response = NinoNotFound
+  test("NinoNotFound should serialize to correct JSON") {
+    val response = NinoNotFound
 
-  val json = Json.toJson(response)
+    val json = Json.toJson(response)
 
-  assert((json \ "errorCode").as[String] == "1002")
-  assert((json \ "errorDescription").as[String] == "NINO not found")
+    assert((json \ "errorCode").as[String] == "1002")
+    assert((json \ "errorDescription").as[String] == "NINO not found")
+  }
