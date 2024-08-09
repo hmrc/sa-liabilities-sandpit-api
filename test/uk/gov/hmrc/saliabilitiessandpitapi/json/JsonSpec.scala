@@ -22,7 +22,7 @@ import play.api.libs.json.*
 
 class JsonSpec extends AnyFunSuite with Matchers:
 
-  test("bigDecimalBasedWrites should correctly convert T to BigDecimal"){
+  test("bigDecimalBasedWrites should correctly convert T to BigDecimal") {
     case class Foo(value: Int)
     val exampleWrites: Writes[Foo] = bigDecimalBasedWrites(_.value)
 
@@ -33,7 +33,7 @@ class JsonSpec extends AnyFunSuite with Matchers:
 
   test("bigDecimalBasedReads should correctly read BigDecimal from JsValue") {
     val bigDecimalReads: Reads[BigDecimal] = bigDecimalBasedReads
-    val json = Json.toJson(BigDecimal(123.45))
+    val json                               = Json.toJson(BigDecimal(123.45))
 
     val result = json.validate[BigDecimal](bigDecimalReads).getOrElse(BigDecimal(0))
 

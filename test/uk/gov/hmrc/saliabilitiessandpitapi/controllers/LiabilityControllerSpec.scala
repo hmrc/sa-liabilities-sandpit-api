@@ -38,10 +38,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class LiabilityControllerSpec extends AnyWordSpec with Matchers:
 
+  private val service: LiabilityService = mock[LiabilityService]
+  private val getLiabilityFunction      = mock[String => Future[LiabilityResponse]]
+
+  private given ec: ExecutionContext = components.executionContext
+
   private given components: ControllerComponents = Helpers.stubControllerComponents()
-  private given ec: ExecutionContext             = components.executionContext
-  private val service: LiabilityService          = mock[LiabilityService]
-  private val getLiabilityFunction               = mock[String => Future[LiabilityResponse]]
 
   "GET /liability/nino/:nino endpoint" should {
 
@@ -70,7 +72,7 @@ class LiabilityControllerSpec extends AnyWordSpec with Matchers:
   }
 
 private object LiabilityControllerSpec:
+  private val invalidInputNino: LiabilityResponse = Ok(Seq())
+
   object method:
     val GET = "GET"
-
-  private val invalidInputNino: LiabilityResponse = Ok(Seq())

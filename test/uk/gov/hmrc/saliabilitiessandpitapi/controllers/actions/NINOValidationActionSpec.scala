@@ -25,8 +25,8 @@ import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.NINOValidationActionSpec.TestController
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 class NINOValidationActionSpec extends AnyFunSuite, Matchers {
 

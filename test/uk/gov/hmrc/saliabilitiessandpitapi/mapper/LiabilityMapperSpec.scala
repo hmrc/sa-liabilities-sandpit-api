@@ -29,48 +29,48 @@ class LiabilityMapperSpec extends AnyFunSuite, Matchers, MockitoSugar:
   val TestLiabilityMapper: LiabilityMapper = new LiabilityMapper {}
 
   test("mapToLiabilityResponse should throw NinoNotFoundException for Left(ErrorResponse)"):
-    val errorResponse: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] = Left(mock[ErrorResponse])
+  val errorResponse: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] = Left(mock[ErrorResponse])
 
-    an[NinoNotFoundException] should be thrownBy TestLiabilityMapper.mapToLiabilityResponse(errorResponse)
+  an[NinoNotFoundException] should be thrownBy TestLiabilityMapper.mapToLiabilityResponse(errorResponse)
 
   test("mapToLiabilityResponse should return Ok with single BalanceDetail"):
-    val balance = BalanceDetail(
+  val balance                                                             = BalanceDetail(
+    payableAmount = PayableAmount(100.00),
+    payableDueDate = PayableDueDate("2024-07-20"),
+    pendingDueAmount = PendingDueAmount(100.02),
+    pendingDueDate = PendingDueDate("2024-08-20"),
+    overdueAmount = OverdueAmount(100.03),
+    totalBalance = TotalBalance(300.5)
+  )
+  val response: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] = Right(balance)
+  val expectedResult                                                      = LiabilityResponse.Ok(Seq(balance))
+
+  val result = TestLiabilityMapper.mapToLiabilityResponse(response)
+
+  result shouldEqual expectedResult
+
+  test("mapToLiabilityResponse should return Ok with a sequence of BalanceDetail"):
+  val balances                                                            = Seq(
+    BalanceDetail(
       payableAmount = PayableAmount(100.00),
       payableDueDate = PayableDueDate("2024-07-20"),
       pendingDueAmount = PendingDueAmount(100.02),
       pendingDueDate = PendingDueDate("2024-08-20"),
       overdueAmount = OverdueAmount(100.03),
       totalBalance = TotalBalance(300.5)
+    ),
+    BalanceDetail(
+      payableAmount = PayableAmount(200.00),
+      payableDueDate = PayableDueDate("2024-08-20"),
+      pendingDueAmount = PendingDueAmount(200.02),
+      pendingDueDate = PendingDueDate("2024-09-20"),
+      overdueAmount = OverdueAmount(200.03),
+      totalBalance = TotalBalance(600.5)
     )
-    val response: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] = Right(balance)
-    val expectedResult = LiabilityResponse.Ok(Seq(balance))
+  )
+  val expectedResult                                                      = LiabilityResponse.Ok(balances)
+  val response: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] = Right(balances)
 
-    val result = TestLiabilityMapper.mapToLiabilityResponse(response)
+  val result = TestLiabilityMapper.mapToLiabilityResponse(response)
 
-    result shouldEqual expectedResult
-
-  test("mapToLiabilityResponse should return Ok with a sequence of BalanceDetail"):
-    val balances = Seq(
-      BalanceDetail(
-        payableAmount = PayableAmount(100.00),
-        payableDueDate = PayableDueDate("2024-07-20"),
-        pendingDueAmount = PendingDueAmount(100.02),
-        pendingDueDate = PendingDueDate("2024-08-20"),
-        overdueAmount = OverdueAmount(100.03),
-        totalBalance = TotalBalance(300.5)
-      ),
-      BalanceDetail(
-        payableAmount = PayableAmount(200.00),
-        payableDueDate = PayableDueDate("2024-08-20"),
-        pendingDueAmount = PendingDueAmount(200.02),
-        pendingDueDate = PendingDueDate("2024-09-20"),
-        overdueAmount = OverdueAmount(200.03),
-        totalBalance = TotalBalance(600.5)
-      )
-    )
-    val expectedResult = LiabilityResponse.Ok(balances)
-    val response: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] = Right(balances)
-
-    val result = TestLiabilityMapper.mapToLiabilityResponse(response)
-
-    result shouldEqual expectedResult
+  result shouldEqual expectedResult

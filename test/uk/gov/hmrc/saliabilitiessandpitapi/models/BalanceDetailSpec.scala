@@ -47,7 +47,7 @@ object BalanceDetailSpec:
     overdueAmount = OverdueAmount(BigDecimal(100.03)),
     totalBalance = TotalBalance(BigDecimal(300.5))
   )
-  
+
 class BalanceDetailSpec extends AnyFunSuite with Matchers:
 
   test("BalanceDetail should be serialized to JSON correctly") {
@@ -63,7 +63,7 @@ class BalanceDetailSpec extends AnyFunSuite with Matchers:
 
   test("Reads should handle single BalanceDetail and Seq[BalanceDetail] correctly") {
     val singleJson = Json.toJson(balanceDetail)
-    val seqJson = Json.toJson(Seq(balanceDetail))
+    val seqJson    = Json.toJson(Seq(balanceDetail))
 
     singleJson.validate[BalanceDetail | Seq[BalanceDetail]] shouldEqual JsSuccess(balanceDetail)
     seqJson.validate[BalanceDetail | Seq[BalanceDetail]] shouldEqual JsSuccess(Seq(balanceDetail))
@@ -84,7 +84,7 @@ class BalanceDetailSpec extends AnyFunSuite with Matchers:
   }
 
   test("HttpReads should parse successful response with Seq[BalanceDetail]") {
-    val seqJson = Json.toJson(Seq(balanceDetail))
+    val seqJson  = Json.toJson(Seq(balanceDetail))
     val response = mock[HttpResponse]
     when(response.status).thenReturn(200)
     when(response.json).thenReturn(seqJson)
@@ -97,24 +97,40 @@ class BalanceDetailSpec extends AnyFunSuite with Matchers:
 
   test("HttpReads should parse error response") {
     val errorResponseJson = Json.parse("""{ "status": 400, "message": "Bad Request" }""")
-    val response = mock[HttpResponse]
+    val response          = mock[HttpResponse]
     when(response.status).thenReturn(400)
     when(response.json).thenReturn(errorResponseJson)
 
     val result = implicitly[HttpReads[Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]]]]
       .read("GET", "foo", response)
 
-    result shouldEqual Left(ErrorResponse(400, "Error parsing response", Some("List((/statusCode,List(JsonValidationError(List(error.path.missing),ArraySeq()))))"), None))
+    result shouldEqual Left(
+      ErrorResponse(
+        400,
+        "Error parsing response",
+        Some("List((/statusCode,List(JsonValidationError(List(error.path.missing),ArraySeq()))))"),
+        None
+      )
+    )
   }
 
   test("HttpReads should handle parse error response") {
     val invalidJson = Json.parse("""{ "invalid": "data" }""")
-    val response = mock[HttpResponse]
+    val response    = mock[HttpResponse]
     when(response.status).thenReturn(400)
     when(response.json).thenReturn(invalidJson)
 
     val result = implicitly[HttpReads[Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]]]]
       .read("GET", "foo", response)
 
-    result shouldEqual Left(ErrorResponse(400, "Error parsing response", Some("List((/message,List(JsonValidationError(List(error.path.missing),ArraySeq()))), (/statusCode,List(JsonValidationError(List(error.path.missing),ArraySeq()))))"), None))
+    result shouldEqual Left(
+      ErrorResponse(
+        400,
+        "Error parsing response",
+        Some(
+          "List((/message,List(JsonValidationError(List(error.path.missing),ArraySeq()))), (/statusCode,List(JsonValidationError(List(error.path.missing),ArraySeq()))))"
+        ),
+        None
+      )
+    )
   }

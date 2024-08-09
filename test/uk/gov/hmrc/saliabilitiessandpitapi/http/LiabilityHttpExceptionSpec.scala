@@ -23,31 +23,31 @@ import uk.gov.hmrc.saliabilitiessandpitapi.http.LiabilityHttpException.{InvalidP
 class LiabilityHttpExceptionSpec extends AnyFunSuite, Matchers:
 
   test("InvalidPathParametersException should have correct message and responseCode"):
-    val exception = InvalidPathParametersException()
+  val exception = InvalidPathParametersException()
 
-    exception.message shouldEqual "Invalid NINO format received."
-    exception.responseCode shouldEqual 400
+  exception.message shouldEqual "Invalid NINO format received."
+  exception.responseCode shouldEqual 400
 
   test("NinoNotFoundException should have correct message and responseCode"):
-    val exception = NinoNotFoundException()
+  val exception = NinoNotFoundException()
 
-    exception.message shouldEqual "The provided NINO was not found in the system."
-    exception.responseCode shouldEqual 400
+  exception.message shouldEqual "The provided NINO was not found in the system."
+  exception.responseCode shouldEqual 400
 
   test("InvalidPathParametersException should allow custom message and responseCode"):
-    val customMessage = "Custom error message"
-    val customResponseCode = 404
+  val customMessage      = "Custom error message"
+  val customResponseCode = 404
 
-    val exception = InvalidPathParametersException(message = customMessage, responseCode = customResponseCode)
+  val exception = InvalidPathParametersException(message = customMessage, responseCode = customResponseCode)
 
-    exception.message shouldEqual customMessage
-    exception.responseCode shouldEqual customResponseCode
+  exception.message shouldEqual customMessage
+  exception.responseCode shouldEqual customResponseCode
 
   test("NinoNotFoundException should allow custom message and responseCode"):
-    val customMessage = "Custom NINO not found message"
-    val customResponseCode = 404
+  val customMessage      = "Custom NINO not found message"
+  val customResponseCode = 404
 
-    val exception = NinoNotFoundException(message = customMessage, responseCode = customResponseCode)
+  val exception = NinoNotFoundException(message = customMessage, responseCode = customResponseCode)
 
-    exception.message shouldEqual customMessage
-    exception.responseCode shouldEqual customResponseCode
+  exception.message shouldEqual customMessage
+  exception.responseCode shouldEqual customResponseCode

@@ -22,9 +22,9 @@ import play.api.http.{ContentTypeOf, ContentTypes, Writeable}
 import play.api.libs.json.*
 import play.api.mvc.Codec
 import uk.gov.hmrc.saliabilitiessandpitapi.models.*
-import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.*
-import LiabilityResponse.*
+import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse.*
 import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponseSpec.*
+import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.*
 
 object LiabilityResponseSpec:
 
@@ -37,14 +37,13 @@ object LiabilityResponseSpec:
     TotalBalance(BigDecimal(300.5))
   )
 
-  val okResponse: LiabilityResponse = Ok(Seq(balanceDetail))
+  val okResponse: LiabilityResponse               = Ok(Seq(balanceDetail))
   val methodNotAllowedResponse: LiabilityResponse = MethodNotAllowed("Method not allowed")
 
 class LiabilityResponseSpec extends AnyFunSuite with Matchers {
 
   test("LiabilityResponse.Ok should serialize to JSON correctly") {
-    val expectedJson = Json.parse(
-      """
+    val expectedJson = Json.parse("""
         |{
         |  "balances": [
         |    {
@@ -63,8 +62,7 @@ class LiabilityResponseSpec extends AnyFunSuite with Matchers {
   }
 
   test("LiabilityResponse.MethodNotAllowed should serialize to JSON correctly") {
-    val expectedJson = Json.parse(
-      """
+    val expectedJson = Json.parse("""
         |{
         |  "description": "Method not allowed"
         |}
@@ -83,8 +81,8 @@ class LiabilityResponseSpec extends AnyFunSuite with Matchers {
     implicit val codec: Codec = Codec.utf_8
 
     val jsonString = Json.toJson(okResponse).toString()
-    val writeable = implicitly[Writeable[LiabilityResponse]]
-    val result = writeable.transform(okResponse).utf8String
+    val writeable  = implicitly[Writeable[LiabilityResponse]]
+    val result     = writeable.transform(okResponse).utf8String
 
     result shouldEqual jsonString
   }

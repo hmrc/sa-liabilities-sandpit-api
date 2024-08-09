@@ -25,8 +25,8 @@ class ModelsSpec extends AnyFunSuite with Matchers:
 
   test("PendingDueDate should serialize and deserialize correctly") {
     val date: PendingDueDate = PendingDueDate("2024-08-20")
-    val json = Json.toJson(date)
-    val expectedJson = JsString("2024-08-20")
+    val json                 = Json.toJson(date)
+    val expectedJson         = JsString("2024-08-20")
 
     json shouldEqual expectedJson
     json.as[PendingDueDate] shouldEqual date
@@ -34,8 +34,8 @@ class ModelsSpec extends AnyFunSuite with Matchers:
 
   test("PayableDueDate should serialize and deserialize correctly") {
     val date: PayableDueDate = PayableDueDate("2024-07-20")
-    val json = Json.toJson(date)
-    val expectedJson = JsString("2024-07-20")
+    val json                 = Json.toJson(date)
+    val expectedJson         = JsString("2024-07-20")
 
     json shouldEqual expectedJson
     json.as[PayableDueDate] shouldEqual date
@@ -43,8 +43,8 @@ class ModelsSpec extends AnyFunSuite with Matchers:
 
   test("TotalBalance should serialize and deserialize correctly") {
     val balance: TotalBalance = TotalBalance(BigDecimal(300.50))
-    val json = Json.toJson(balance)
-    val expectedJson = JsNumber(300.50)
+    val json                  = Json.toJson(balance)
+    val expectedJson          = JsNumber(300.50)
 
     json shouldEqual expectedJson
     json.as[TotalBalance] shouldEqual balance
@@ -52,8 +52,8 @@ class ModelsSpec extends AnyFunSuite with Matchers:
 
   test("PayableAmount should serialize and deserialize correctly") {
     val amount: PayableAmount = PayableAmount(BigDecimal(100.00))
-    val json = Json.toJson(amount)
-    val expectedJson = JsNumber(100.00)
+    val json                  = Json.toJson(amount)
+    val expectedJson          = JsNumber(100.00)
 
     json shouldEqual expectedJson
     json.as[PayableAmount] shouldEqual amount
@@ -61,8 +61,8 @@ class ModelsSpec extends AnyFunSuite with Matchers:
 
   test("PendingDueAmount should serialize and deserialize correctly") {
     val amount: PendingDueAmount = PendingDueAmount(BigDecimal(100.02))
-    val json = Json.toJson(amount)
-    val expectedJson = JsNumber(100.02)
+    val json                     = Json.toJson(amount)
+    val expectedJson             = JsNumber(100.02)
 
     json shouldEqual expectedJson
     json.as[PendingDueAmount] shouldEqual amount
@@ -70,8 +70,8 @@ class ModelsSpec extends AnyFunSuite with Matchers:
 
   test("OverdueAmount should serialize and deserialize correctly") {
     val amount: OverdueAmount = OverdueAmount(BigDecimal(100.03))
-    val json = Json.toJson(amount)
-    val expectedJson = JsNumber(100.03)
+    val json                  = Json.toJson(amount)
+    val expectedJson          = JsNumber(100.03)
 
     json shouldEqual expectedJson
     json.as[OverdueAmount] shouldEqual amount

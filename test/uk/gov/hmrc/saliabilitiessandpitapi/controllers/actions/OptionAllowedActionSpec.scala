@@ -28,12 +28,12 @@ import scala.concurrent.Future
 class OptionAllowedActionSpec extends AnyFunSuite, Matchers:
 
   test("OptionAllowedAction should add Allow headers to the result"):
-    val request  = FakeRequest(GET, "/liability/nino/QQ123456A")
-    
-    val result: Future[Result] = (controller optionsEndpoint "dummy")(request)
+  val request = FakeRequest(GET, "/liability/nino/QQ123456A")
 
-    status(result) shouldBe OK
-    headers(result) should contain("Allow" -> "GET")
+  val result: Future[Result] = (controller optionsEndpoint "dummy")(request)
+
+  status(result) shouldBe OK
+  headers(result)  should contain("Allow" -> "GET")
 
 private object OptionAllowedActionSpec:
   val controller: OptionAllowedAction & BaseController = new OptionAllowedAction with BaseController:

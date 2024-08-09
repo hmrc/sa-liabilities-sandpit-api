@@ -29,10 +29,10 @@ import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.MethodNotAllowedA
 class MethodNotAllowedActionSpec extends AnyFunSuite, Matchers:
 
   private val controller = new TestController()
-  given ActorSystem = ActorSystem("test-system")
+  given ActorSystem      = ActorSystem("test-system")
 
   test("methodNotAllowed should return MethodNotAllowed response with correct message") {
-    val request = FakeRequest(GET, "/test")
+    val request      = FakeRequest(GET, "/test")
     val expectedJson = Json.obj("description" -> "Method Not Allowed")
 
     val result = (controller methodNotAllowed "dummy")(request)
