@@ -17,19 +17,15 @@
 package uk.gov.hmrc.saliabilitiessandpitapi.mapper
 
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
+import uk.gov.hmrc.saliabilitiessandpitapi.http.LiabilityHttpException.NinoNotFoundException
 import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse
-import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse.{InternalServerError, Ok}
+import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse.Ok
 import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
-import LiabilityMapper._
 
 trait LiabilityMapper:
 
   val mapToLiabilityResponse: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] => LiabilityResponse = {
-    case Left(errorResponse)                 => errorResponse.toLiabilityResponse
+    case Left(errorResponse)                 => throw new NinoNotFoundException
     case Right(single: BalanceDetail)        => Ok(Seq(single))
     case Right(iterable: Seq[BalanceDetail]) => Ok(iterable)
   }
-
-object LiabilityMapper:
-  extension (errorResponse: ErrorResponse)
-    inline def toLiabilityResponse: LiabilityResponse = InternalServerError(errorResponse.message)

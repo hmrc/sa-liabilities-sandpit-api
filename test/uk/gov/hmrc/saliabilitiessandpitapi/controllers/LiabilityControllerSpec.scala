@@ -73,4 +73,4 @@ private object LiabilityControllerSpec:
   object method:
     val GET = "GET"
 
-  private val invalidInputNino: LiabilityResponse = InvalidInputNino("Invalid NINO format.")
+  private val invalidInputNino: LiabilityResponse = Ok(Seq())

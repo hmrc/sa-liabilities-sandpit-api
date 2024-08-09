@@ -24,29 +24,14 @@ import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
 
 enum LiabilityResponse:
   case Ok(balances: Seq[BalanceDetail])
-  case Error(error: String, description: String)
-  case InvalidInputNino(description: String)
   case MethodNotAllowed(description: String)
-  case NotFound(description: String)
-  case Unauthorized(description: String)
-  case InternalServerError(description: String)
 
 object LiabilityResponse:
   given OWrites[Ok]                                                 = writes[Ok]
-  given OWrites[Error]                                              = writes[Error]
-  given OWrites[InvalidInputNino]                                   = writes[InvalidInputNino]
   given OWrites[MethodNotAllowed]                                   = writes[MethodNotAllowed]
-  given OWrites[NotFound]                                           = writes[NotFound]
-  given OWrites[InternalServerError]                                = writes[InternalServerError]
-  given OWrites[Unauthorized]                                       = writes[Unauthorized]
   given Writes[LiabilityResponse]                                   = Writes {
-    case ok: Ok                                   => toJsObject(ok)
-    case error: Error                             => toJsObject(error)
-    case notFound: NotFound                       => toJsObject(notFound)
-    case unauthorized: Unauthorized               => toJsObject(unauthorized)
-    case invalidInputNino: InvalidInputNino       => toJsObject(invalidInputNino)
-    case methodNotAllowed: MethodNotAllowed       => toJsObject(methodNotAllowed)
-    case internalServerError: InternalServerError => toJsObject(internalServerError)
+    case ok: Ok                             => toJsObject(ok)
+    case methodNotAllowed: MethodNotAllowed => toJsObject(methodNotAllowed)
   }
   given contentTypeOf: ContentTypeOf[LiabilityResponse]             = ContentTypeOf(Some(ContentTypes.JSON))
   given writeable(using codec: Codec): Writeable[LiabilityResponse] =
