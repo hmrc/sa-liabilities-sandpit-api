@@ -17,8 +17,7 @@
 package uk.gov.hmrc.saliabilitiessandpitapi.http
 
 import play.api.Configuration
-import play.api.mvc.Results.*
-import play.api.mvc.{RequestHeader, Result}
+import play.api.mvc.{RequestHeader, Result, Results}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
@@ -45,5 +44,5 @@ class LiabilityErrorHandler @Inject() (
 private object LiabilityErrorHandler:
   extension (liabilityHttpException: LiabilityHttpException)
     inline def toResult: Result = liabilityHttpException match
-      case NinoNotFoundException(message, responseCode)          => new Status(responseCode)(NinoNotFound)
-      case InvalidPathParametersException(message, responseCode) => new Status(responseCode)(InvalidInputNino)
+      case NinoNotFoundException(message, responseCode)          => ErrorResultCreator(responseCode)(NinoNotFound)
+      case InvalidPathParametersException(message, responseCode) => ErrorResultCreator(responseCode)(InvalidInputNino)
