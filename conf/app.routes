@@ -1,11 +1,11 @@
 # microservice specific routes
 
-GET         /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.getLiabilityByNino(nino: String)
-OPTIONS     /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.optionsEndpoint(nino: String)
-POST        /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
-PUT         /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
-DELETE      /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
-PATCH       /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
-HEAD        /liability/nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
+GET         /nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.getLiabilityByNino(nino: String)
+OPTIONS     /nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.optionsEndpoint(nino: String)
+POST        /nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
+PUT         /nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
+DELETE      /nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
+PATCH       /nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
+HEAD        /nino/:nino       uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityController.methodNotAllowed(nino: String)
 
 
