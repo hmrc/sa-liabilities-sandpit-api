@@ -45,7 +45,7 @@ class LiabilityResponseSpec extends AnyFunSuite with Matchers {
   test("LiabilityResponse.Ok should serialize to JSON correctly") {
     val expectedJson = Json.parse("""
         |{
-        |  "balances": [
+        |  "balanceDetails": [
         |    {
         |      "payableAmount": 100.00,
         |      "payableDueDate": "2024-07-20",

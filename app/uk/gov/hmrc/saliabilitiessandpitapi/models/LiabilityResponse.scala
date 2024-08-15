@@ -23,7 +23,7 @@ import play.api.mvc.Codec
 import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
 
 enum LiabilityResponse:
-  case Ok(balances: Seq[BalanceDetail])
+  case Ok(balanceDetails: Seq[BalanceDetail])
   case MethodNotAllowed(description: String)
 
 object LiabilityResponse:

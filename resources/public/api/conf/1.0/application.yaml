@@ -2,48 +2,120 @@ openapi: "3.0.3"
 
 info:
   version: 1.0.0
-  title: Hello World
+  title: SA Liabilities Payment Details API
 
 servers:
-  - url: https://test-api.service.hmrc.gov.uk/hello-world
-    description: Sandbox
-  - url: https://api.service.hmrc.gov.uk/hello-world
+  - url: http://localhost:9000/payments/self-assessment/liabilities
+    description: Sandbox (Local)
+  - url: https://test-api.service.hmrc.gov.uk/payments/self-assessment/liabilities
+    description: Sandbox (Test)
+  - url: https://api.service.hmrc.gov.uk/payments/self-assessment/liabilities
     description: Production
 
 components:
+  headers:
+    correlationId:
+      description: Unique Transaction Reference
+      schema:
+        type: string
+        format: uuid
+
   parameters:
     acceptHeader:
       name: Accept
       in: header
       schema:
         type: string
-        enum: [
-          "application/vnd.hmrc.1.0+json",
-          "application/vnd.hmrc.1.0+xml"
-        ]
+        enum:
+          - "application/vnd.hmrc.1.0+json"
+          - "application/vnd.hmrc.1.0+xml"
+      required: true
+    nino:
+      name: NINO
+      in: path
+      description: National Insurance Number
+      schema:
+        type: string
+        pattern: '^[A-Z]{2}[0-9]{6}[A-Z]{0,1}$'
       required: true
 
+  schemas:
+    BalanceDetail:
+      type: object
+      properties:
+        payableAmount:
+          type: number
+          format: double
+          description: Total of charges due within 30 days.
+        payableDueDate:
+          type: string
+          format: date
+          description: Earliest due date of payable charges.
+        pendingDueAmount:
+          type: number
+          format: double
+          description: Total of charges due in 30 days or more.
+        pendingDueDate:
+          type: string
+          format: date
+          description: Earliest due date of pending charges.
+        overdueAmount:
+          type: number
+          format: double
+          description: Total of overdue charges.
+        totalBalance:
+          type: number
+          format: double
+          description: Sum of payable, pending, and overdue amounts.
+      required:
+        - payableAmount
+        - pendingDueAmount
+        - overdueAmount
+        - totalBalance
+
+    ErrorResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          enum:
+            - "1002"
+            - "1113"
+        errorDescription:
+          type: string
+          enum:
+            - "NINO not found"
+            - "Invalid path parameters"
+      required:
+        - errorCode
+        - errorDescription
+
 paths:
-  /hello-world:
+  /nino/{NINO}:
     get:
-      summary: Placeholder hello world endpoint
-      description: |
-        An endpoint that returns "Hello world"
-      tags:
-        - sa-liabilities-sandpit-api
+      summary: Get SA liabilities payment details
       parameters:
-        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/nino'
       responses:
-        200:
-          description: "OK Response"
+        '200':
+          description: SA Liabilities payment details
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-              example:
-                "Hello world"
+                  balanceDetails:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BalanceDetail'
+        '400':
+          description: Invalid request parameters or NINO not found
+          headers:
+            CorrelationId:
+              $ref: '#/components/headers/correlationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - {}
