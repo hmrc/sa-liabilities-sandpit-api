@@ -50,6 +50,14 @@ class LiabilityErrorHandlerSpec extends AnyFunSuite, MockitoSugar, Matchers:
     contentAsString(result) shouldBe expectedResult
   }
 
+  test("should add a CorrelationId header to the result") {
+    val exception              = NinoNotFoundException()
+    val result: Future[Result] = errorHandler.onServerError(request, exception)
+
+    status(result)                      shouldBe 400
+    headers(result) get "CorrelationId" shouldBe defined
+  }
+
   test("should delegate unknown exceptions to the superclass handler") {
     val exception = new RuntimeException("Unknown error")
 
