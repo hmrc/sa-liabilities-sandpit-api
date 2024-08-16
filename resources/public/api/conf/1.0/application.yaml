@@ -5,11 +5,9 @@ info:
   title: SA Liabilities Payment Details API
 
 servers:
-  - url: http://localhost:9000/payments/self-assessment/liabilities
-    description: Sandbox (Local)
-  - url: https://test-api.service.hmrc.gov.uk/payments/self-assessment/liabilities
-    description: Sandbox (Test)
-  - url: https://api.service.hmrc.gov.uk/payments/self-assessment/liabilities
+  - url: https://test-api.service.hmrc.gov.uk
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk
     description: Production
 
 components:
@@ -21,22 +19,13 @@ components:
         format: uuid
 
   parameters:
-    acceptHeader:
-      name: Accept
-      in: header
-      schema:
-        type: string
-        enum:
-          - "application/vnd.hmrc.1.0+json"
-          - "application/vnd.hmrc.1.0+xml"
-      required: true
     nino:
       name: NINO
       in: path
       description: National Insurance Number
       schema:
         type: string
-        pattern: '^[A-Z]{2}[0-9]{6}[A-Z]{0,1}$'
+        pattern: '^[A-Z]{2}[0-9]{6}[A-Z]$'
       required: true
 
   schemas:
@@ -46,27 +35,39 @@ components:
         payableAmount:
           type: number
           format: double
-          description: Total of charges due within 30 days.
+          description: The sum of any non-zero charges whose payment due date is within 30 days.
+          minimum: -99999999999.99
+          maximum: 99999999999.99
         payableDueDate:
           type: string
           format: date
-          description: Earliest due date of payable charges.
+          description: |
+              Next payment date for charges due.
+              Format: YYYY-MM-DD.
         pendingDueAmount:
           type: number
           format: double
-          description: Total of charges due in 30 days or more.
+          description: The sum of any charges whose payment is pending (i.e., due on a date later than 30 days).
+          minimum: -99999999999.99
+          maximum: 99999999999.99
         pendingDueDate:
           type: string
           format: date
-          description: Earliest due date of pending charges.
+          description: |
+              The date by when the next pending charge must be paid.
+              Format: YYYY-MM-DD.
         overdueAmount:
           type: number
           format: double
-          description: Total of overdue charges.
+          description: The total amount associated with charges whose due date is in the past.
+          minimum: -99999999999.99
+          maximum: 99999999999.99
         totalBalance:
           type: number
           format: double
-          description: Sum of payable, pending, and overdue amounts.
+          description: Total balance should be equal to the sum of the balance due within 30 days, balance not due in 30 days, and overdue amount.
+          minimum: -99999999999.99
+          maximum: 99999999999.99
       required:
         - payableAmount
         - pendingDueAmount
@@ -91,7 +92,7 @@ components:
         - errorDescription
 
 paths:
-  /nino/{NINO}:
+  /payments/self-assessment/liabilities/nino/{NINO}:
     get:
       summary: Get SA liabilities payment details
       parameters:
