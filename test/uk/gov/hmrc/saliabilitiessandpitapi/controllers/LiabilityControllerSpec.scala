@@ -28,7 +28,10 @@ import play.api.test.*
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityControllerSpec.method.*
 import uk.gov.hmrc.saliabilitiessandpitapi.controllers.LiabilityControllerSpec.{invalidInputNino, method}
-import uk.gov.hmrc.saliabilitiessandpitapi.controllers.stubs.NINOValidationActionStubs.{failingNINO, validNINO}
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.{AuthAction, NINOValidationAction}
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.stubs.AuthActionStubs
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.stubs.AuthActionStubs.*
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.stubs.NINOValidationActionStubs.{FailingNINOValidationAction, ValidNINOValidationAction}
 import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse
 import uk.gov.hmrc.saliabilitiessandpitapi.models.LiabilityResponse.*
 import uk.gov.hmrc.saliabilitiessandpitapi.service.LiabilityService
@@ -36,20 +39,21 @@ import uk.gov.hmrc.saliabilitiessandpitapi.service.LiabilityService
 import scala.concurrent.Future.*
 import scala.concurrent.{ExecutionContext, Future}
 
-class LiabilityControllerSpec extends AnyWordSpec with Matchers:
+class LiabilityControllerSpec extends AnyWordSpec, Matchers:
 
   private val service: LiabilityService = mock[LiabilityService]
   private val getLiabilityFunction      = mock[String => Future[LiabilityResponse]]
 
-  private given ec: ExecutionContext = components.executionContext
-
   private given components: ControllerComponents = Helpers.stubControllerComponents()
+  private given ec: ExecutionContext             = components.executionContext
 
   "GET /liability/nino/:nino endpoint" should {
 
     "returns 200 for QQ123456A" in {
-      val request: Request[AnyContentAsEmpty.type] = FakeRequest(GET, "/liability/nino/QQ123456A")
-      val controller: LiabilityController          = LiabilityController(service, validNINO)
+      given request: Request[AnyContentAsEmpty.type] = FakeRequest(GET, "/liability/nino/QQ123456A")
+      given authAction: AuthAction                   = SuccessfulAuthorisation
+      given validation: NINOValidationAction         = ValidNINOValidationAction
+      val controller: LiabilityController            = LiabilityController(service)
 
       when(getLiabilityFunction.apply(any[String])) thenReturn successful(invalidInputNino)
       when(service.getLiability) thenReturn getLiabilityFunction
@@ -61,13 +65,26 @@ class LiabilityControllerSpec extends AnyWordSpec with Matchers:
     }
 
     "returns 400 for invalid NINO format" in {
-      val request: Request[AnyContentAsEmpty.type] = FakeRequest(GET, "/liability/INVALID")
-      val controller: LiabilityController          = LiabilityController(service, failingNINO)
+      given request: Request[AnyContentAsEmpty.type] = FakeRequest(GET, "/liability/INVALID")
+      given authAction: AuthAction                   = SuccessfulAuthorisation
+      given validation: NINOValidationAction         = FailingNINOValidationAction
+      val controller: LiabilityController            = LiabilityController(service)
 
       val result: Future[Result] = controller.getLiabilityByNino("INVALID")(request)
 
       status(result)        shouldBe Status.BAD_REQUEST
       contentAsString(result) should include("Invalid NINO format")
+    }
+
+    "returns 400 for insufficient enrolments" in {
+      given request: Request[AnyContentAsEmpty.type] = FakeRequest(GET, "/liability/QQ123456A")
+      given authAction: AuthAction                   = InsufficientEnrolmentsAuthorisation
+      given validation: NINOValidationAction         = ValidNINOValidationAction
+      val controller: LiabilityController            = LiabilityController(service)
+
+      val result: Future[Result] = controller.getLiabilityByNino("QQ123456A")(request)
+
+      status(result) shouldBe Status.UNAUTHORIZED
     }
   }
 

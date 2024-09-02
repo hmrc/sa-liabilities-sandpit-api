@@ -40,7 +40,7 @@ object LiabilityResponseSpec:
   val okResponse: LiabilityResponse               = Ok(Seq(balanceDetail))
   val methodNotAllowedResponse: LiabilityResponse = MethodNotAllowed("Method not allowed")
 
-class LiabilityResponseSpec extends AnyFunSuite with Matchers {
+class LiabilityResponseSpec extends AnyFunSuite, Matchers {
 
   test("LiabilityResponse.Ok should serialize to JSON correctly") {
     val expectedJson = Json.parse("""

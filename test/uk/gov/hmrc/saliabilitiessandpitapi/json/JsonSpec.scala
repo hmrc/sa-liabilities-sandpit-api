@@ -20,7 +20,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.*
 
-class JsonSpec extends AnyFunSuite with Matchers:
+class JsonSpec extends AnyFunSuite, Matchers:
 
   test("bigDecimalBasedWrites should correctly convert T to BigDecimal") {
     case class Foo(value: Int)

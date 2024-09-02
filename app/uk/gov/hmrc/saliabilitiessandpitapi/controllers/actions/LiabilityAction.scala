@@ -20,16 +20,13 @@ import play.api.mvc.{Action, AnyContent, BaseController, Request}
 import uk.gov.hmrc.saliabilitiessandpitapi.connectors.WithExecutionContext
 import uk.gov.hmrc.saliabilitiessandpitapi.service.LiabilityService
 
-private[controllers] trait LiabilityAction extends WithExecutionContext {
+private[controllers] trait LiabilityAction(using auth: AuthAction, validation: NINOValidationAction)
+    extends WithExecutionContext {
   self: BaseController =>
 
   val liabilityService: LiabilityService
-  val ninoValidation: NINOValidationAction
 
-  def getLiabilityByNino(nino: String): Action[AnyContent] = (Action andThen ninoValidation).async {
-    implicit request: Request[_] =>
-      for {
-        result <- liabilityService.getLiability(nino)
-      } yield Ok(result)
+  def getLiabilityByNino(nino: String): Action[AnyContent] = auth andThen validation async {
+    implicit request: Request[_] => liabilityService getLiability nino map (Ok(_))
   }
 }

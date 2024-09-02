@@ -34,7 +34,6 @@ class LiabilityHttpExceptionSpec extends AnyFunSuite, Matchers:
 
     exception.message shouldEqual "The provided NINO was not found in the system."
     exception.responseCode shouldEqual 400
-
   }
 
   test("InvalidPathParametersException should allow custom message and responseCode") {

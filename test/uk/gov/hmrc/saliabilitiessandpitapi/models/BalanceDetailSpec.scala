@@ -48,7 +48,7 @@ object BalanceDetailSpec:
     totalBalance = TotalBalance(BigDecimal(300.5))
   )
 
-class BalanceDetailSpec extends AnyFunSuite with Matchers:
+class BalanceDetailSpec extends AnyFunSuite, Matchers:
 
   test("BalanceDetail should be serialized to JSON correctly") {
     val json = Json.toJson(balanceDetail)
