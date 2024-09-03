@@ -16,19 +16,22 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.controllers
 
-import play.api.mvc.{Action, ControllerComponents}
+import play.api.mvc.ControllerComponents
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendBaseController
-import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.{LiabilityAction, MethodNotAllowedAction, NINOValidationAction, OptionAllowedAction}
+import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.*
 import uk.gov.hmrc.saliabilitiessandpitapi.service.LiabilityService
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class LiabilityController @Inject() (
-  val liabilityService: LiabilityService,
-  val ninoValidation: NINOValidationAction
-)(implicit val controllerComponents: ControllerComponents, val ec: ExecutionContext)
-    extends BackendBaseController,
-      LiabilityAction,
+  val liabilityService: LiabilityService
+)(implicit
+  val controllerComponents: ControllerComponents,
+  val ec: ExecutionContext,
+  ninoValidation: NINOValidationAction,
+  auth: AuthAction
+) extends BackendBaseController,
       MethodNotAllowedAction,
-      OptionAllowedAction
+      OptionAllowedAction,
+      LiabilityAction

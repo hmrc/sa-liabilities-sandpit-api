@@ -21,7 +21,7 @@ import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.*
 import uk.gov.hmrc.saliabilitiessandpitapi.models.*
 
-class ModelsSpec extends AnyFunSuite with Matchers:
+class ModelsSpec extends AnyFunSuite, Matchers:
 
   test("PendingDueDate should serialize and deserialize correctly") {
     val date: PendingDueDate = PendingDueDate("2024-08-20")

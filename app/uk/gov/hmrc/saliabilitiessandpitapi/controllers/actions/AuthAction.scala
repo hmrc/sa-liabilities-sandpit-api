@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.saliabilitiessandpitapi.controllers
+package uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions
 
 import play.api.mvc.*
 import uk.gov.hmrc.auth
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendHeaderCarrierProvider
-import uk.gov.hmrc.saliabilitiessandpitapi.auth.{AuthorisationPredicate, NinoFromPathExtractor}
+import uk.gov.hmrc.saliabilitiessandpitapi.auth.AuthorisationPredicate
 
-import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-package object actions:
-  case class DefaultNINOValidationAction @Inject() ()(implicit val executionContext: ExecutionContext)
-      extends NINOValidationAction
+trait AuthAction(using controllerComponents: ControllerComponents) extends ActionBuilder[Request, AnyContent]:
+  self: BackendHeaderCarrierProvider & AuthorisedFunctions & AuthorisationPredicate =>
 
-  class DefaultAuthAction @Inject() (override val authConnector: AuthConnector)(using
-    controllerComponents: ControllerComponents
-  ) extends AuthAction,
-        AuthorisedFunctions,
-        BackendHeaderCarrierProvider,
-        AuthorisationPredicate,
-        NinoFromPathExtractor
+  given parser: BodyParser[AnyContent]     = controllerComponents.parsers.defaultBodyParser
+  given executionContext: ExecutionContext = controllerComponents.executionContext
+
+  override def invokeBlock[A](using request: Request[A], block: Request[A] => Future[Result]): Future[Result] =
+    authorised(predicate)(block(request))

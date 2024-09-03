@@ -17,7 +17,9 @@
 package uk.gov.hmrc.saliabilitiessandpitapi.controllers.stubs
 
 import play.api.libs.json.Json
+import play.api.libs.json.Json.*
 import play.api.mvc.*
+import play.api.test.Helpers
 import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.NINOValidationAction
 
 import scala.concurrent.Future.*
@@ -25,11 +27,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object NINOValidationActionStubs:
 
-  val validNINO: NINOValidationAction = new NINOValidationAction:
-    implicit val executionContext: ExecutionContext                               = ExecutionContext.global
+  protected sealed trait MockedNINOValidationAction extends NINOValidationAction:
+    given executionContext: ExecutionContext = Helpers.stubControllerComponents().executionContext
+
+  case object ValidNINOValidationAction extends MockedNINOValidationAction:
     override protected def filter[A](request: Request[A]): Future[Option[Result]] = successful(None)
 
-  val failingNINO: NINOValidationAction = new NINOValidationAction:
-    implicit val executionContext: ExecutionContext                               = ExecutionContext.global
+  case object FailingNINOValidationAction extends MockedNINOValidationAction:
     override protected def filter[A](request: Request[A]): Future[Option[Result]] =
-      successful(Some(Results.BadRequest(Json.obj("error" -> "Invalid NINO format."))))
+      successful(Some(Results BadRequest obj("error" -> "Invalid NINO format.")))

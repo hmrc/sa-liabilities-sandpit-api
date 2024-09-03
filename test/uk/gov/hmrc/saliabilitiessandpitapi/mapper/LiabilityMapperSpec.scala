@@ -24,15 +24,12 @@ import uk.gov.hmrc.saliabilitiessandpitapi.http.LiabilityHttpException.NinoNotFo
 import uk.gov.hmrc.saliabilitiessandpitapi.models.*
 import uk.gov.hmrc.saliabilitiessandpitapi.models.integration.BalanceDetail
 
-class LiabilityMapperSpec extends AnyFunSuite, Matchers, MockitoSugar:
-
-  val TestLiabilityMapper: LiabilityMapper = new LiabilityMapper {}
+class LiabilityMapperSpec extends AnyFunSuite, Matchers, MockitoSugar, LiabilityMapper:
 
   test("mapToLiabilityResponse should throw NinoNotFoundException for Left(ErrorResponse)") {
     val errorResponse: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] = Left(mock[ErrorResponse])
 
-    an[NinoNotFoundException] should be thrownBy TestLiabilityMapper.mapToLiabilityResponse(errorResponse)
-
+    an[NinoNotFoundException] should be thrownBy mapToLiabilityResponse(errorResponse)
   }
 
   test("mapToLiabilityResponse should return Ok with single BalanceDetail") {
@@ -47,7 +44,7 @@ class LiabilityMapperSpec extends AnyFunSuite, Matchers, MockitoSugar:
     val response: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] = Right(balance)
     val expectedResult                                                      = LiabilityResponse.Ok(Seq(balance))
 
-    val result = TestLiabilityMapper.mapToLiabilityResponse(response)
+    val result = mapToLiabilityResponse(response)
 
     result shouldEqual expectedResult
   }
@@ -74,7 +71,7 @@ class LiabilityMapperSpec extends AnyFunSuite, Matchers, MockitoSugar:
     val expectedResult                                                      = LiabilityResponse.Ok(balances)
     val response: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] = Right(balances)
 
-    val result = TestLiabilityMapper.mapToLiabilityResponse(response)
+    val result = mapToLiabilityResponse(response)
 
     result shouldEqual expectedResult
   }

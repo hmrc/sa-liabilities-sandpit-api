@@ -21,12 +21,12 @@ import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import play.api.mvc.*
 import play.api.mvc.Results.*
+import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import play.api.test.{FakeRequest, Injecting}
 import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.NINOValidationActionSpec.TestController
 
+import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
 
 class NINOValidationActionSpec extends AnyFunSuite, Matchers {
 
