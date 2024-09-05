@@ -19,7 +19,9 @@ package uk.gov.hmrc.saliabilitiessandpitapi.http
 import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 
-sealed trait LiabilityHttpException extends RuntimeException:
+import scala.util.control.NoStackTrace
+
+sealed trait LiabilityHttpException extends RuntimeException with NoStackTrace:
   def message: String
   def responseCode: Int
 

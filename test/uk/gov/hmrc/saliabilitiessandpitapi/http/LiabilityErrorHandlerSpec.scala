@@ -26,10 +26,15 @@ import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
+import uk.gov.hmrc.saliabilitiessandpitapi.http.LiabilityErrorHandlerSpec.UnknownException
 import uk.gov.hmrc.saliabilitiessandpitapi.http.LiabilityErrorResponse.{InvalidInputNino, NinoNotFound}
 import uk.gov.hmrc.saliabilitiessandpitapi.http.LiabilityHttpException.{InvalidPathParametersException, NinoNotFoundException}
 
 import scala.concurrent.Future
+import scala.util.control.NoStackTrace
+
+object LiabilityErrorHandlerSpec:
+  lazy val UnknownException = new RuntimeException("Unknown error") with NoStackTrace
 
 class LiabilityErrorHandlerSpec extends AnyFunSuite, MockitoSugar, Matchers:
 
@@ -59,9 +64,7 @@ class LiabilityErrorHandlerSpec extends AnyFunSuite, MockitoSugar, Matchers:
   }
 
   test("should delegate unknown exceptions to the superclass handler") {
-    val exception = new RuntimeException("Unknown error")
-
-    val result: Future[Result] = errorHandler.onServerError(request, exception)
+    val result: Future[Result] = errorHandler.onServerError(request, UnknownException)
 
     status(result) shouldBe 500
     assert(contentAsString(result).contains("Unknown error"))
