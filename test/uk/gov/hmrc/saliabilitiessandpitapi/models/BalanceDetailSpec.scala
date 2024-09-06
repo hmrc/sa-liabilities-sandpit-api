@@ -114,6 +114,55 @@ class BalanceDetailSpec extends AnyFunSuite, Matchers:
     )
   }
 
+  test("BalanceDetail should return JsError when required fields are missing") {
+    val invalidJson = Json.parse("""  {  "someOtherField": "unexpected value" } """)
+    val result      = invalidJson.validate[BalanceDetail]
+
+    result shouldEqual JsError(
+      List(
+        (JsPath \ "totalBalance", List(JsonValidationError("error.path.missing"))),
+        (JsPath \ "overdueAmount", List(JsonValidationError("error.path.missing"))),
+        (JsPath \ "pendingDueDate", List(JsonValidationError("error.path.missing"))),
+        (JsPath \ "pendingDueAmount", List(JsonValidationError("error.path.missing"))),
+        (JsPath \ "payableDueDate", List(JsonValidationError("error.path.missing"))),
+        (JsPath \ "payableAmount", List(JsonValidationError("error.path.missing")))
+      )
+    )
+  }
+
+  test("HttpReads should return ErrorResponse when BalanceDetail JSON parsing fails") {
+    val invalidJson = Json.parse("""{ "invalidField": "unexpected value" }""")
+    val response    = mock[HttpResponse]
+    when(response.status).thenReturn(200)
+    when(response.json).thenReturn(invalidJson)
+
+    val result = implicitly[HttpReads[Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]]]]
+      .read("GET", "foo", response)
+
+    result shouldEqual Left(
+      ErrorResponse(
+        200,
+        "Error parsing response",
+        Some(
+          "List((,List(JsonValidationError(List(Unable to parse as BalanceDetail or Seq[BalanceDetail]),ArraySeq()))))"
+        ),
+        None
+      )
+    )
+  }
+
+  test("HttpReads should return ErrorResponse when error response JSON is valid") {
+    val errorResponseJson = Json.parse("""{ "statusCode": 400, "message": "Bad Request" }""")
+    val response          = mock[HttpResponse]
+    when(response.status).thenReturn(400)
+    when(response.json).thenReturn(errorResponseJson)
+
+    val result = implicitly[HttpReads[Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]]]]
+      .read("GET", "foo", response)
+
+    result shouldEqual Left(ErrorResponse(400, "Bad Request"))
+  }
+
   test("HttpReads should handle parse error response") {
     val invalidJson = Json.parse("""{ "invalid": "data" }""")
     val response    = mock[HttpResponse]

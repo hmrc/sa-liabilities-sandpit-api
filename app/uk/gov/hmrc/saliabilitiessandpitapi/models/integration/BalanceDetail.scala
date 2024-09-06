@@ -43,7 +43,6 @@ object BalanceDetail:
     (single, sequence) match {
       case (JsSuccess(single, _), _) => JsSuccess(single)
       case (_, JsSuccess(seq, _))    => JsSuccess(seq)
-      case (JsError(errors), _)      => JsError(errors)
       case _                         => JsError("Unable to parse as BalanceDetail or Seq[BalanceDetail]")
     }
 
