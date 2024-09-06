@@ -17,7 +17,7 @@
 package uk.gov.hmrc.saliabilitiessandpitapi.http
 
 import org.scalatest.funsuite.AnyFunSuite
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.saliabilitiessandpitapi.http.LiabilityErrorResponse.*
 
 class LiabilityErrorResponseSpec extends AnyFunSuite:
@@ -48,7 +48,7 @@ class LiabilityErrorResponseSpec extends AnyFunSuite:
   test("NinoNotFound should serialize to correct JSON") {
     val response = NinoNotFound
 
-    val json = Json.toJson(response)
+    val json = Json.toJson(response)(LiabilityErrorResponse.given_Writes_LiabilityErrorResponse)
 
     assert((json \ "errorCode").as[String] == "1002")
     assert((json \ "errorDescription").as[String] == "NINO not found")
