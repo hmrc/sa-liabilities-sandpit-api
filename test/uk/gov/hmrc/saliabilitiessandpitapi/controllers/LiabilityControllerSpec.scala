@@ -64,7 +64,7 @@ class LiabilityControllerSpec extends AnyWordSpec, Matchers:
       verify(service.getLiability)("QQ123456A")
     }
 
-    "returns 400 for invalid NINO format" in {
+    "returns 400 for invalid NINO" in {
       given request: Request[AnyContentAsEmpty.type] = FakeRequest(GET, "/liability/INVALID")
       given authAction: AuthAction                   = SuccessfulAuthorisation
       given validation: NINOValidationAction         = FailingNINOValidationAction
@@ -73,7 +73,7 @@ class LiabilityControllerSpec extends AnyWordSpec, Matchers:
       val result: Future[Result] = controller.getLiabilityByNino("INVALID")(request)
 
       status(result)        shouldBe Status.BAD_REQUEST
-      contentAsString(result) should include("Invalid NINO format")
+      contentAsString(result) should include("Invalid path parameters")
     }
 
     "returns 400 for insufficient enrolments" in {

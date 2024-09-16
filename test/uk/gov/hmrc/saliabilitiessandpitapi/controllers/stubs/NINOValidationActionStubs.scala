@@ -35,4 +35,4 @@ object NINOValidationActionStubs:
 
   case object FailingNINOValidationAction extends MockedNINOValidationAction:
     override protected def filter[A](request: Request[A]): Future[Option[Result]] =
-      successful(Some(Results BadRequest obj("error" -> "Invalid NINO format.")))
+      successful(Some(Results BadRequest obj("error" -> "Invalid path parameters")))
