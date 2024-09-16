@@ -22,7 +22,7 @@ import play.api.libs.json.Json.*
 import play.api.mvc.Codec
 
 enum LiabilityErrorResponse(val errorCode: String, val errorDescription: String):
-  case InvalidInputNino extends LiabilityErrorResponse("1113", "Invalid NINO format")
+  case InvalidInputNino extends LiabilityErrorResponse("1113", "Invalid path parameters")
   case NinoNotFound extends LiabilityErrorResponse("1002", "NINO not found")
 
 object LiabilityErrorResponse:
