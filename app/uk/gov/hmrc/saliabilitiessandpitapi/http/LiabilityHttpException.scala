@@ -27,11 +27,11 @@ sealed trait LiabilityHttpException extends RuntimeException with NoStackTrace:
 
 object LiabilityHttpException:
   case class InvalidPathParametersException(
-    message: String = "Invalid NINO format received.",
+    message: String = "Invalid path parameters",
     responseCode: Int = BAD_REQUEST
   ) extends LiabilityHttpException
 
   case class NinoNotFoundException(
-    message: String = "The provided NINO was not found in the system.",
+    message: String = "NINO not found",
     responseCode: Int = BAD_REQUEST
   ) extends LiabilityHttpException
