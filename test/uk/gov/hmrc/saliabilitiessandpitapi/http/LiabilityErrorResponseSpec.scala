@@ -26,7 +26,7 @@ class LiabilityErrorResponseSpec extends AnyFunSuite:
     val response = InvalidInputNino
 
     assert(response.errorCode == "1113")
-    assert(response.errorDescription == "Invalid NINO format")
+    assert(response.errorDescription == "Invalid path parameters")
   }
 
   test("NinoNotFound should have correct errorCode and errorDescription") {
@@ -42,7 +42,7 @@ class LiabilityErrorResponseSpec extends AnyFunSuite:
     val json = Json.toJson(response)
 
     assert((json \ "errorCode").as[String] == "1113")
-    assert((json \ "errorDescription").as[String] == "Invalid NINO format")
+    assert((json \ "errorDescription").as[String] == "Invalid path parameters")
   }
 
   test("NinoNotFound should serialize to correct JSON") {

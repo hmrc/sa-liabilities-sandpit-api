@@ -25,14 +25,14 @@ class LiabilityHttpExceptionSpec extends AnyFunSuite, Matchers:
   test("InvalidPathParametersException should have correct message and responseCode") {
     val exception = InvalidPathParametersException()
 
-    exception.message shouldEqual "Invalid NINO format received."
+    exception.message shouldEqual "Invalid path parameters"
     exception.responseCode shouldEqual 400
   }
 
   test("NinoNotFoundException should have correct message and responseCode") {
     val exception = NinoNotFoundException()
 
-    exception.message shouldEqual "The provided NINO was not found in the system."
+    exception.message shouldEqual "NINO not found"
     exception.responseCode shouldEqual 400
   }
 

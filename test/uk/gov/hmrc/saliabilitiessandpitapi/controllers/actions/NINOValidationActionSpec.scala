@@ -48,7 +48,7 @@ class NINOValidationActionSpec extends AnyFunSuite, Matchers {
 
     status(result) shouldEqual BAD_REQUEST
 
-    val expectedJson = Json.parse("""{"errorCode":"1113","errorDescription":"Invalid NINO format"}""")
+    val expectedJson = Json.parse("""{"errorCode":"1113","errorDescription":"Invalid path parameters"}""")
     val actualJson   = contentAsJson(result)
 
     actualJson shouldEqual expectedJson
@@ -60,7 +60,7 @@ class NINOValidationActionSpec extends AnyFunSuite, Matchers {
 
     status(result) shouldEqual BAD_REQUEST
 
-    val expectedJson = Json.parse("""{"errorCode":"1113","errorDescription":"Invalid NINO format"}""")
+    val expectedJson = Json.parse("""{"errorCode":"1113","errorDescription":"Invalid path parameters"}""")
     val actualJson   = contentAsJson(result)
 
     actualJson shouldEqual expectedJson
