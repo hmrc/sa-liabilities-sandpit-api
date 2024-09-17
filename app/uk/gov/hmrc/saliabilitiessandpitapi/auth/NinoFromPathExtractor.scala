@@ -27,4 +27,4 @@ trait NinoFromPathExtractor:
     NinoPattern findFirstMatchIn request.path map (_ group 1)
 
 private[this] object NinoFromPathExtractor extends NinoFromPathExtractor:
-  private val NinoPattern: Regex = """.*/nino/([A-Z]{2}\d{6}[A-Z]).*""".r
+  private val NinoPattern: Regex = """.*/nino/([A-Z]{2}[0-9]{6}[A-Z]{0,1}$)""".r

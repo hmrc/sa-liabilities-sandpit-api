@@ -33,7 +33,7 @@ trait NINOValidationAction extends ActionFilter[Request]:
   }
 
 private object NINOValidationAction:
-  private final val ninoPattern = "^[A-Z]{2}[0-9]{6}[A-D]{1}$".r
+  private final val ninoPattern = "^[A-Z]{2}[0-9]{6}[A-Z]{0,1}$".r
   private final val BAD_REQUEST = Results.BadRequest(InvalidInputNino)
 
   extension (request: Request[_]) {
