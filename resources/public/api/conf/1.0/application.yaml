@@ -37,7 +37,7 @@ components:
       description: The National Insurance Number that is the subject of the request
       schema:
         type: string
-        pattern: '^[A-Z]{2}[0-9]{6}[A-Z]$'
+        pattern: '^[A-Z]{2}[0-9]{6}[A-Z]{0,1}$'
       required: true
 
   schemas:
