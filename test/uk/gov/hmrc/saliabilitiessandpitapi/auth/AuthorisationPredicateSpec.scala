@@ -25,64 +25,68 @@ import uk.gov.hmrc.auth.core.{Enrolment, Nino}
 
 class AuthorisationPredicateSpec extends AnyWordSpec, Matchers, AuthorisationPredicate, NinoFromPathExtractor:
 
-  "AuthorisationPredicate" should:
+  "AuthorisationPredicate" should {
 
-    "generate a predicate with a valid NINO" in:
+    "generate a predicate with a valid NINO" in {
       val request: Request[AnyContentAsEmpty.type] = FakeRequest("GET", "/nino/QQ123456A")
-      val predicateResult = predicate(request)
+      val predicateResult                          = predicate(request)
 
       predicateResult shouldBe (Enrolment("IR-SA") and Nino(hasNino = true, Some("QQ123456A")))
-      
+    }
 
-    "generate a predicate with no NINO when not present in the path" in:
+    "generate a predicate with no NINO when not present in the path" in {
       val request: Request[AnyContentAsEmpty.type] = FakeRequest("GET", "/some/other/path")
-      val predicateResult = predicate(request)
+      val predicateResult                          = predicate(request)
 
       predicateResult shouldBe (Enrolment("IR-SA") and Nino(hasNino = true, None))
-    
+    }
 
-    "generate a predicate with None NINO when the NINO is invalid" in:
+    "generate a predicate with None NINO when the NINO is invalid" in {
       val request: Request[AnyContentAsEmpty.type] = FakeRequest("GET", "/nino/INVALID")
-      val predicateResult = predicate(request)
+      val predicateResult                          = predicate(request)
 
       predicateResult shouldBe (Enrolment("IR-SA") and Nino(hasNino = true, None))
+    }
 
-    "handle a POST request with a valid NINO in the path" in:
+    "handle a POST request with a valid NINO in the path" in {
       val request: Request[AnyContentAsEmpty.type] = FakeRequest("POST", "/nino/QQ123456A")
-      val predicateResult = predicate(request)
+      val predicateResult                          = predicate(request)
 
       predicateResult shouldBe (Enrolment("IR-SA") and Nino(hasNino = true, Some("QQ123456A")))
-    
+    }
 
-    "generate a predicate correctly when request path contains query parameters" in:
+    "generate a predicate correctly when request path contains query parameters" in {
       val request: Request[AnyContentAsEmpty.type] = FakeRequest("GET", "/nino/QQ123456A?param=value")
-      val predicateResult = predicate(request)
+      val predicateResult                          = predicate(request)
 
       predicateResult shouldBe (Enrolment("IR-SA") and Nino(hasNino = true, Some("QQ123456A")))
-    
+    }
 
-    "generate a predicate with None NINO when NINO is in the path but does not match the expected pattern" in:
+    "generate a predicate with None NINO when NINO is in the path but does not match the expected pattern" in {
       val request: Request[AnyContentAsEmpty.type] = FakeRequest("GET", "/nino/ABC123456")
-      val predicateResult = predicate(request)
+      val predicateResult                          = predicate(request)
 
       predicateResult shouldBe (Enrolment("IR-SA") and Nino(hasNino = true, None))
-    
+    }
 
-    "handle request paths with NINO at the end" in:
+    "handle request paths with NINO at the end" in {
       val request: Request[AnyContentAsEmpty.type] = FakeRequest("GET", "/some/path/nino/QQ123456A")
-      val predicateResult = predicate(request)
+      val predicateResult                          = predicate(request)
 
       predicateResult shouldBe (Enrolment("IR-SA") and Nino(hasNino = true, Some("QQ123456A")))
-    
+    }
 
-    "generate a predicate with None NINO when the path is empty" in:
+    "generate a predicate with None NINO when the path is empty" in {
       val request: Request[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
-      val predicateResult = predicate(request)
+      val predicateResult                          = predicate(request)
 
       predicateResult shouldBe (Enrolment("IR-SA") and Nino(hasNino = true, None))
-    
-    "generate a predicate with None NINO when the path contains only special characters" in:
+    }
+
+    "generate a predicate with None NINO when the path contains only special characters" in {
       val request: Request[AnyContentAsEmpty.type] = FakeRequest("GET", "/@@@/!!!/###")
-      val predicateResult = predicate(request)
+      val predicateResult                          = predicate(request)
 
       predicateResult shouldBe (Enrolment("IR-SA") and Nino(hasNino = true, None))
+    }
+  }
