@@ -55,7 +55,15 @@ class LiabilityErrorHandlerSpec extends AnyFunSuite, MockitoSugar, Matchers:
     contentAsString(result) shouldBe expectedResult
   }
 
-  test("should add a CorrelationId header to the result") {
+  test("should add a CorrelationId header to the InvalidPathParametersException result") {
+    val exception              = InvalidPathParametersException()
+    val result: Future[Result] = errorHandler.onServerError(request, exception)
+
+    status(result)                      shouldBe 400
+    headers(result) get "CorrelationId" shouldBe defined
+  }
+
+  test("should add a CorrelationId header to the NinoNotFoundException result") {
     val exception              = NinoNotFoundException()
     val result: Future[Result] = errorHandler.onServerError(request, exception)
 

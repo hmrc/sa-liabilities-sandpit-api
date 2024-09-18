@@ -47,6 +47,7 @@ class NINOValidationActionSpec extends AnyFunSuite, Matchers {
     val result      = (controller testAction invalidNino)(request)
 
     status(result) shouldEqual BAD_REQUEST
+    headers(result) get "CorrelationId" shouldBe defined
 
     val expectedJson = Json.parse("""{"errorCode":"1113","errorDescription":"Invalid path parameters"}""")
     val actualJson   = contentAsJson(result)
