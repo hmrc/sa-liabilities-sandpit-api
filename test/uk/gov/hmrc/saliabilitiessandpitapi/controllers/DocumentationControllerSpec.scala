@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.controllers
 
+import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.time.{Millis, Span}
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.NOT_FOUND
@@ -35,10 +37,11 @@ class DocumentationControllerSpec extends AnyWordSpecLike, GuiceOneAppPerSuite, 
       val url: String = "/api/definition"
 
       val result: Option[Future[Result]] = route(app, FakeRequest("GET", url))
+      val timeout: Timeout               = Timeout(Span(500, Millis))
 
       result match
         case None                               => fail(s"Route for $url did not match")
-        case Some(futureResult: Future[Result]) => whenReady(futureResult)(_.header.status shouldBe OK)
+        case Some(futureResult: Future[Result]) => whenReady(futureResult, timeout)(_.header.status shouldBe OK)
     }
 
     "return OK when requesting specification" in {
