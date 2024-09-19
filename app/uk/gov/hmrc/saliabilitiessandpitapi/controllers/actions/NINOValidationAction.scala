@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions
 
+import play.api.http.Status.BAD_REQUEST
 import play.api.mvc.{ActionFilter, Request, Result, Results}
 import uk.gov.hmrc.saliabilitiessandpitapi.controllers.actions.NINOValidationAction.*
+import uk.gov.hmrc.saliabilitiessandpitapi.http.ErrorResultCreator
 import uk.gov.hmrc.saliabilitiessandpitapi.http.LiabilityErrorResponse.InvalidInputNino
 
 import scala.concurrent.Future
@@ -28,13 +30,13 @@ trait NINOValidationAction extends ActionFilter[Request]:
   override protected def filter[A](request: Request[A]): Future[Option[Result]] = successful {
     request.lastSegment match {
       case Some(input: String) if ninoPattern matches input => None
-      case _                                                => Some(BAD_REQUEST)
+      case _                                                => Some(InvalidInputNinoResult)
     }
   }
 
 private object NINOValidationAction:
-  private final val ninoPattern = "^[A-Z]{2}[0-9]{6}[A-Z]{0,1}$".r
-  private final val BAD_REQUEST = Results.BadRequest(InvalidInputNino)
+  private final val ninoPattern            = "^[A-Z]{2}[0-9]{6}[A-Z]{0,1}$".r
+  private final val InvalidInputNinoResult = ErrorResultCreator(BAD_REQUEST)(InvalidInputNino)
 
   extension (request: Request[_]) {
     private def lastSegment: Option[String] = request.path
