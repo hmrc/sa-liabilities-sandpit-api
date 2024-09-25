@@ -39,26 +39,54 @@ object BalanceDetailSpec:
     }
   """)
 
+  val minBalanceDetailJson: JsValue = Json.parse("""
+    {
+      "pendingDueAmount":100.02,
+      "payableAmount":100,
+      "overdueAmount":100.03
+    }
+  """)
+
   val balanceDetail: BalanceDetail = BalanceDetail(
     payableAmount = PayableAmount(BigDecimal(100.00)),
-    payableDueDate = PayableDueDate("2024-07-20"),
+    payableDueDate = Some(PayableDueDate("2024-07-20")),
     pendingDueAmount = PendingDueAmount(BigDecimal(100.02)),
-    pendingDueDate = PendingDueDate("2024-08-20"),
+    pendingDueDate = Some(PendingDueDate("2024-08-20")),
     overdueAmount = OverdueAmount(BigDecimal(100.03)),
-    totalBalance = TotalBalance(BigDecimal(300.5))
+    totalBalance = Some(TotalBalance(BigDecimal(300.5)))
+  )
+
+  val minBalanceDetail: BalanceDetail = BalanceDetail(
+    payableAmount = PayableAmount(BigDecimal(100.00)),
+    None,
+    pendingDueAmount = PendingDueAmount(BigDecimal(100.02)),
+    None,
+    overdueAmount = OverdueAmount(BigDecimal(100.03)),
+    None
   )
 
 class BalanceDetailSpec extends AnyFunSuite, Matchers:
 
-  test("BalanceDetail should be serialized to JSON correctly") {
+  test("Optional BalanceDetail should be serialized to JSON correctly") {
     val json = Json.toJson(balanceDetail)
 
     json shouldEqual balanceDetailJson
   }
 
-  test("BalanceDetail should be deserialized from JSON correctly") {
+  test("Optional BalanceDetail should be deserialized from JSON correctly") {
     val result = balanceDetailJson.validate[BalanceDetail]
     result shouldEqual JsSuccess(balanceDetail)
+  }
+
+  test("Required BalanceDetail should be serialized to JSON correctly") {
+    val json = Json.toJson(minBalanceDetail)
+
+    json shouldEqual minBalanceDetailJson
+  }
+
+  test("Required BalanceDetail should be deserialized from JSON correctly") {
+    val result = minBalanceDetailJson.validate[BalanceDetail]
+    result shouldEqual JsSuccess(minBalanceDetail)
   }
 
   test("Reads should handle single BalanceDetail and Seq[BalanceDetail] correctly") {
@@ -120,11 +148,8 @@ class BalanceDetailSpec extends AnyFunSuite, Matchers:
 
     result shouldEqual JsError(
       List(
-        (JsPath \ "totalBalance", List(JsonValidationError("error.path.missing"))),
         (JsPath \ "overdueAmount", List(JsonValidationError("error.path.missing"))),
-        (JsPath \ "pendingDueDate", List(JsonValidationError("error.path.missing"))),
         (JsPath \ "pendingDueAmount", List(JsonValidationError("error.path.missing"))),
-        (JsPath \ "payableDueDate", List(JsonValidationError("error.path.missing"))),
         (JsPath \ "payableAmount", List(JsonValidationError("error.path.missing")))
       )
     )

@@ -17,21 +17,25 @@
 package uk.gov.hmrc.saliabilitiessandpitapi.models.integration
 
 import play.api.http.Status
-import play.api.libs.json.*
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
 import uk.gov.hmrc.saliabilitiessandpitapi.models.*
 
+import scala.annotation.tailrec
+
 case class BalanceDetail(
   payableAmount: PayableAmount,
-  payableDueDate: PayableDueDate,
+  payableDueDate: Option[PayableDueDate],
   pendingDueAmount: PendingDueAmount,
-  pendingDueDate: PendingDueDate,
+  pendingDueDate: Option[PendingDueDate],
   overdueAmount: OverdueAmount,
-  totalBalance: TotalBalance
+  totalBalance: Option[TotalBalance]
 )
 
 object BalanceDetail:
+
   extension (status: Int) private inline def isSuccessful: Boolean = Status.isSuccessful(status)
 
   given Format[BalanceDetail] = Json.format[BalanceDetail]
