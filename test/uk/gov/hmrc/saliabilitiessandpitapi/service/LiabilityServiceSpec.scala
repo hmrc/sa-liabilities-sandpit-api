@@ -109,11 +109,11 @@ class LiabilityServiceSpec
 private[this] object LiabilityServiceSpec:
   val balanceDetail: BalanceDetail = BalanceDetail(
     payableAmount = PayableAmount(BigDecimal(100.00)),
-    payableDueDate = PayableDueDate("2024-07-20"),
+    payableDueDate = Some(PayableDueDate("2024-07-20")),
     pendingDueAmount = PendingDueAmount(BigDecimal(100.02)),
-    pendingDueDate = PendingDueDate("2024-08-20"),
+    pendingDueDate = Some(PendingDueDate("2024-08-20")),
     overdueAmount = OverdueAmount(BigDecimal(100.03)),
-    totalBalance = TotalBalance(BigDecimal(300.5))
+    totalBalance = Some(TotalBalance(BigDecimal(300.5)))
   )
 
   val mockLiabilityResponse: LiabilityResponse  = LiabilityResponse.Ok(Seq(balanceDetail))

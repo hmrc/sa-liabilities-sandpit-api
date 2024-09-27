@@ -30,11 +30,11 @@ object LiabilityResponseSpec:
 
   val balanceDetail: BalanceDetail = BalanceDetail(
     PayableAmount(BigDecimal(100.00)),
-    PayableDueDate("2024-07-20"),
+    Some(PayableDueDate("2024-07-20")),
     PendingDueAmount(BigDecimal(100.02)),
-    PendingDueDate("2024-08-20"),
+    Some(PendingDueDate("2024-08-20")),
     OverdueAmount(BigDecimal(100.03)),
-    TotalBalance(BigDecimal(300.5))
+    Some(TotalBalance(BigDecimal(300.5)))
   )
 
   val okResponse: LiabilityResponse               = Ok(Seq(balanceDetail))

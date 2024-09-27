@@ -35,11 +35,11 @@ class LiabilityMapperSpec extends AnyFunSuite, Matchers, MockitoSugar, Liability
   test("mapToLiabilityResponse should return Ok with single BalanceDetail") {
     val balance                                                             = BalanceDetail(
       payableAmount = PayableAmount(100.00),
-      payableDueDate = PayableDueDate("2024-07-20"),
+      payableDueDate = Some(PayableDueDate("2024-07-20")),
       pendingDueAmount = PendingDueAmount(100.02),
-      pendingDueDate = PendingDueDate("2024-08-20"),
+      pendingDueDate = Some(PendingDueDate("2024-08-20")),
       overdueAmount = OverdueAmount(100.03),
-      totalBalance = TotalBalance(300.5)
+      totalBalance = Some(TotalBalance(300.5))
     )
     val response: Either[ErrorResponse, BalanceDetail | Seq[BalanceDetail]] = Right(balance)
     val expectedResult                                                      = LiabilityResponse.Ok(Seq(balance))
@@ -53,19 +53,19 @@ class LiabilityMapperSpec extends AnyFunSuite, Matchers, MockitoSugar, Liability
     val balances                                                            = Seq(
       BalanceDetail(
         payableAmount = PayableAmount(100.00),
-        payableDueDate = PayableDueDate("2024-07-20"),
+        payableDueDate = Some(PayableDueDate("2024-07-20")),
         pendingDueAmount = PendingDueAmount(100.02),
-        pendingDueDate = PendingDueDate("2024-08-20"),
+        pendingDueDate = Some(PendingDueDate("2024-08-20")),
         overdueAmount = OverdueAmount(100.03),
-        totalBalance = TotalBalance(300.5)
+        totalBalance = Some(TotalBalance(300.5))
       ),
       BalanceDetail(
         payableAmount = PayableAmount(200.00),
-        payableDueDate = PayableDueDate("2024-08-20"),
+        payableDueDate = Some(PayableDueDate("2024-08-20")),
         pendingDueAmount = PendingDueAmount(200.02),
-        pendingDueDate = PendingDueDate("2024-09-20"),
+        pendingDueDate = Some(PendingDueDate("2024-09-20")),
         overdueAmount = OverdueAmount(200.03),
-        totalBalance = TotalBalance(600.5)
+        totalBalance = Some(TotalBalance(600.5))
       )
     )
     val expectedResult                                                      = LiabilityResponse.Ok(balances)
