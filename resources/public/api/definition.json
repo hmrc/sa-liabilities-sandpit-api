@@ -1,5 +1,4 @@
 {
-  "scopes": [],
   "api": {
     "name": "Self Assessment Liabilities",
     "description": "An API to retrieve Self Assessment Liabilities payment details",
